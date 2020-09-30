@@ -1,15 +1,14 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <CaseGraph />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import CaseGraph from './components/CaseGraph.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    CaseGraph
   }
 }
 </script>
