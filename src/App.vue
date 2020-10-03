@@ -1,25 +1,28 @@
 <template>
-  <CaseGraph />
+  <summary-card v-for="county in summaryCountyData" :key="county" v-bind="county"/>
 </template>
 
 <script>
-import CaseGraph from './components/CaseGraph.vue'
-
+import SummaryCard from './components/SummaryCard.vue'
+import { mapGetters } from 'vuex'
+import { counties } from './constants/constants';
 export default {
   name: 'App',
   components: {
-    CaseGraph
+    SummaryCard
+  },
+  computed: {
+    counties(){
+      return ['all', ...counties];
+    },
+    ...mapGetters(['countyData', 'summaryCountyData', 'loading']),
+  },
+  mounted(){
+    this.$store.dispatch('getData')
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

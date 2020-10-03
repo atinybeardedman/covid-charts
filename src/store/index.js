@@ -1,7 +1,7 @@
 
 import { createStore } from 'vuex'
 import { getAllData } from '../api/data'
-import { getGroupedData } from '../helpers/dataProcessing';
+import { getGroupedCountyData, sortByDate } from '../helpers/dataProcessing';
 
 export default createStore({
   state: {
@@ -11,16 +11,28 @@ export default createStore({
   getters: {
     recentData: state => {
       const d = new Date();
-      d.setTime(d.getTime() - 14 * 24 * 3600 * 1000);
+      d.setTime(d.getTime() - 15 * 24 * 3600 * 1000);
       const datestring = d.toISOString().substr(0, 10);
       return state.data.filter(d => d.test_date >= datestring);
     },
-    countyPositives: (state, getters) => getGroupedData(getters.recentData),
+    recentCountyData: (state, getters) => getGroupedCountyData(getters.recentData),
+    summaryCountyData: (state, getters) => {
+      const countyData = getters.recentCountyData;
+      return Object.keys(countyData).map(k => ({
+        name: k,
+        newCases: countyData[k].newCases.pop(),
+        totalTests: countyData[k].totalTests.pop(),
+        percentPositive: countyData[k].percentPositive.pop(),
+        rolling7Avg: countyData[k].rolling7Avg.pop(),
+        rolling14Avg: countyData[k].rolling14Avg.pop(),
+      }))
+    },
+    countyData: (state) => getGroupedCountyData(state.data),
     loading: state => state.loading
   },
   mutations: {
     SET_DATA(state, data){
-      state.data = data;
+      state.data = data.sort(sortByDate);
     },
     SET_LOADING(state, isLoading){
       state.loading = isLoading;

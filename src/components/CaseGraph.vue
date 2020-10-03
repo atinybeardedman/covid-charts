@@ -1,7 +1,7 @@
 <template>
   <div class="case-graph">
    <h1 v-if="loading">Loading...</h1>
-   <p v-else>{{countyPositives}}</p>
+   <p v-else>{{countyData.all}}</p>
   </div>
 </template>
 
@@ -10,7 +10,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'CaseGraph',
   computed: {
-    ...mapGetters(['countyPositives', 'loading'])
+    ...mapGetters(['countyData', 'loading'])
   },
   mounted(){
     this.$store.dispatch('getData')
