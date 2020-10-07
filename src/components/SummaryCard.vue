@@ -31,5 +31,15 @@ export default {
 </script>
 
 <style>
+.card {
+    width: 400px;
+    padding: 1em;
+    margin: 0.5em;
+    border: 1px gray solid;
+}
 
+.card ul {
+    padding: 0;
+    list-style: none;
+}
 </style>
