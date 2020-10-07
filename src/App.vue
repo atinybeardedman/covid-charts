@@ -1,5 +1,7 @@
 <template>
-  <summary-card v-for="county in summaryCountyData" :key="county" v-bind="county"/>
+<div class="app">
+  <summary-card v-bind="summaryCountyData[0]"/>
+</div>
 </template>
 
 <script>
@@ -14,7 +16,7 @@ export default {
    
     ...mapGetters(['countyData', 'summaryCountyData', 'loading']),
   },
-  mounted(){
+  mounted: function(){
     this.$store.dispatch('getData')
   }
 }

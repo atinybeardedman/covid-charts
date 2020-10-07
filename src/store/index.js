@@ -1,9 +1,12 @@
 
-import { createStore } from 'vuex'
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
 import { getAllData } from '../api/data'
 import { getGroupedCountyData, sortByDate } from '../helpers/dataProcessing';
 
-export default createStore({
+export default new Vuex.Store({
   state: {
     data: [],
     loading: false

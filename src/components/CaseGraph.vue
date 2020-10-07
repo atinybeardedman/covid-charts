@@ -12,7 +12,7 @@ export default {
   computed: {
     ...mapGetters(['countyData', 'loading'])
   },
-  mounted(){
+  mounted: function(){
     this.$store.dispatch('getData')
   }
 }
