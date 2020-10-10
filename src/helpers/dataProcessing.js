@@ -7,6 +7,7 @@ const getGroupedCountyData = (data) => {
   if (data.length === 0) {
     return {};
   }
+  let date = data[0].test_date;
   const counties = {
     Region: {
       newCases: [0],
@@ -16,7 +17,6 @@ const getGroupedCountyData = (data) => {
       rolling14Avg: [0],
     },
   };
-  let date = data[0].test_date;
   let index = 0;
   for (const point of data) {
     // walk through list and propogate county based data
@@ -79,32 +79,40 @@ const getGroupedCountyData = (data) => {
       counties[county].rolling14Avg[index - 14] = county14Avg;
       counties.Region.rolling14Avg[index - 14] += county14Avg;
     }
-    
+
     // update summary for whole region
     counties.Region.newCases[index] += parseInt(point.new_positives);
     counties.Region.totalTests[index] += parseInt(point.total_number_of_tests);
     counties.Region.percentPositive[index] +=
-    counties[county].percentPositive[index];
+      counties[county].percentPositive[index];
   }
   const RegionPercentTemp =
-  counties.Region.percentPositive[index] / (Object.keys(counties).length - 1);
+    counties.Region.percentPositive[index] / (Object.keys(counties).length - 1);
   counties.Region.percentPositive[index] = round(RegionPercentTemp, 4);
-  index++;
-  
-  if (index > 7) {
+  // index++;
+  console.log(index)
+  if (index > 6) {
     const temp7 =
-      counties.Region.rolling7Avg[index - 8] / (Object.keys(counties).length - 1);
-    counties.Region.rolling7Avg[index - 8] = round(temp7, 4);
-    // console.log(temp7);
+      counties.Region.rolling7Avg[index - 7] /
+      (Object.keys(counties).length - 1);
+    counties.Region.rolling7Avg[index - 7] = round(temp7, 4);
+    
   }
 
-  if (index > 14) {
+  if (index > 13) {
     const temp14 =
-      counties.Region.rolling14Avg[index - 15] /
+      counties.Region.rolling14Avg[index - 14] /
       (Object.keys(counties).length - 1);
-      counties.Region.rolling14Avg[index - 15] = round(temp14, 4);
-    }
-    // console.log(counties.Region)
+    counties.Region.rolling14Avg[index - 14] = round(temp14, 4);
+  }
+  const dataLength = counties.Region.percentPositive.length;
+  const last7Day = avg(counties.Region.percentPositive.slice(dataLength - 7));
+  const last14Day = avg(counties.Region.percentPositive.slice(dataLength - 14));
+  counties.Region.rolling7Avg.push(round(last7Day, 4));
+  counties.Region.rolling14Avg.push(round(last14Day, 4));
+
+
+  
   return counties;
 };
 /**

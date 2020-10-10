@@ -1,19 +1,12 @@
-<template>
-  <div class="case-graph">
-   <h1 v-if="loading">Loading...</h1>
-   <p v-else>{{countyData.all}}</p>
-  </div>
-</template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { Bar } from 'vue-chartjs';
 export default {
+  extends: Bar,
   name: 'CaseGraph',
-  computed: {
-    ...mapGetters(['countyData', 'loading'])
-  },
-  mounted: function(){
-    this.$store.dispatch('getData')
+  props: ['chartdata'],
+  mounted() {
+    this.renderChart(this.chartdata)
   }
 }
 </script>
