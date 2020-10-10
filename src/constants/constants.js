@@ -10,10 +10,10 @@ export const counties = [
 
 export const colors = {
   Dutchess: "#58097d",
-  Orange: "#a40077",
-  Putnam: "#dd0064",
-  Rockland: "#ff4d49",
-  Sullivan: "#ff8a28",
-  Ulster: "#ffc600",
-  Westchester: "#f1ff30",
+  Orange: "#9e0372",
+  Putnam: "#cd3564",
+  Rockland: "#ea6858",
+  Sullivan: "#f79c57",
+  Ulster: "#f8ce6c",
+  Westchester: "#f2ff99",
 };
