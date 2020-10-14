@@ -6,7 +6,7 @@
       </div>
 
       <v-spacer></v-spacer>
-      <v-btn v-for="county in counties" :key="county" text>
+      <v-btn @click="selectCounty(county)" v-for="county in counties" :key="county" text>
         {{ county }}
       </v-btn>
     </v-app-bar>
@@ -14,17 +14,49 @@
     <v-main>
       <v-container fluid>
         <v-row align="center">
+          <v-spacer></v-spacer>
           <v-col :cols="4">
-            <SummaryCard v-bind="summaryCountyData[0]" />
+            <SummaryCard v-bind="selectedCountySummary" />
           </v-col>
+          <v-spacer></v-spacer>
+        </v-row>
+        <v-row align="center">
+          <v-col :cols="4">
+            <LineGraphParent
+              :region="selectedRecentCountyData"
+              :labels="recentDates" 
+              series="percentPositive"
+              :color="selectedColor" 
+            ></LineGraphParent>
+          </v-col>
+          <v-col :cols="4">
+            <LineGraphParent
+              :region="selectedRecentCountyData"
+              :labels="recentDates" 
+              series="rolling7Avg"
+              :color="selectedColor" 
+            ></LineGraphParent>
+          </v-col>
+          <v-col :cols="4">
+            <LineGraphParent
+              :region="selectedRecentCountyData"
+              :labels="recentDates" 
+              series="rolling14Avg"
+              :color="selectedColor" 
+            ></LineGraphParent>
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-spacer></v-spacer>
           <v-col :cols="5">
-            <StackedBar
-              v-if="!loading"
-              :colordict="colors"
-              :chartdata="recentCountyData"
-              :labels="recentDates"
-            />
-          </v-col>
+              <StackedBar
+                v-if="!loading"
+                :colordict="colors"
+                :chartdata="recentCountyData"
+                :labels="recentDates"
+              /></v-col>
+              <v-spacer></v-spacer>
+
         </v-row>
       </v-container>
     </v-main>
@@ -34,6 +66,7 @@
 <script>
 import SummaryCard from "./components/SummaryCard";
 import StackedBar from "./components/StackedBar";
+import LineGraphParent from "./components/LineGraphParent";
 import { mapGetters, mapState } from "vuex";
 export default {
   name: "App",
@@ -41,15 +74,26 @@ export default {
   components: {
     SummaryCard,
     StackedBar,
+    LineGraphParent,
+  },
+  methods: {
+    selectCounty(county){
+      this.$store.commit('SET_COUNTY', county)
+    }
   },
   computed: {
     ...mapState(["counties", "colors"]),
     ...mapGetters([
       "recentCountyData",
-      "summaryCountyData",
+      "selectedCountySummary",
+      "selectedRecentCountyData",
       "loading",
+      "selectedColor",
       "recentDates",
     ]),
+    canLoadSelected () {
+      return this.selectedRecentCountyData && JSON.stringify(this.selectedRecentCountyData) !== '{}'
+    }
   },
   mounted: function () {
     this.$store.dispatch("getData");

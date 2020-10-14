@@ -16,4 +16,5 @@ export const colors = {
   Sullivan: "#f79c57",
   Ulster: "#f8ce6c",
   Westchester: "#f2ff99",
+  Region: '#000'
 };

@@ -12,6 +12,7 @@ export default new Vuex.Store({
     counties: ["Region", ...counties],
     loading: false,
     colors: colors,
+    selectedCounty: "Region",
   },
   getters: {
     recentCountyData: (state, getters) => {
@@ -46,20 +47,37 @@ export default new Vuex.Store({
       if (JSON.stringify(countyData) === "{}") {
         return {};
       }
-      return Object.keys(countyData).map((k) => ({
-        name: k,
-        newCases: [...countyData[k].newCases].pop(),
-        totalTests: [...countyData[k].totalTests].pop(),
-        percentPositive: [...countyData[k].percentPositive].pop(),
-        rolling7Avg: [...countyData[k].rolling7Avg].pop(),
-        rolling14Avg: [...countyData[k].rolling14Avg].pop(),
-      }));
+      const result = {};
+      Object.keys(countyData).forEach((k) => {
+        const obj = {
+          name: k,
+          newCases: [...countyData[k].newCases].pop(),
+          totalTests: [...countyData[k].totalTests].pop(),
+          percentPositive: [...countyData[k].percentPositive].pop(),
+          rolling7Avg: [...countyData[k].rolling7Avg].pop(),
+          rolling14Avg: [...countyData[k].rolling14Avg].pop(),
+        };
+        result[k] = { ...obj };
+      });
+      return result;
     },
     countyData: (state) => getGroupedCountyData(state.data),
     dates: (state) => [...new Set(state.data.map((d) => d.test_date))].sort(),
     recentDates: (state, getters) =>
       getters.dates.slice(getters.dates.length - 14),
     loading: (state) => state.loading,
+    selectedCountyData: (state, getters) => {
+      return getters.countyData[state.selectedCounty];
+    },
+    selectedRecentCountyData: (state, getters) => {
+      return getters.recentCountyData[state.selectedCounty];
+    },
+    selectedCountySummary: (state, getters) => {
+      return getters.summaryCountyData[state.selectedCounty];
+    },
+    selectedColor: (state) => {
+      return colors[state.selectedCounty];
+    },
   },
   mutations: {
     SET_DATA(state, data) {
@@ -67,6 +85,9 @@ export default new Vuex.Store({
     },
     SET_LOADING(state, isLoading) {
       state.loading = isLoading;
+    },
+    SET_COUNTY(state, county) {
+      state.selectedCounty = county;
     },
   },
   actions: {

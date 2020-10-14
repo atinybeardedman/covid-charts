@@ -1,0 +1,82 @@
+<template>
+  <div v-if="dataReady">
+    <LineGraph :chart-data="chartData" :options="this.options"></LineGraph>
+  </div>
+</template>
+
+<script>
+import LineGraph from "./LineGraph";
+
+export default {
+  name: "LineGraphParent",
+  components: {
+    LineGraph,
+  },
+  props: {
+      region: {
+          type: Object,
+          default: null
+      },
+      series: {
+          type: String,
+          default: null
+      },
+      color: {
+          type: String,
+          default: null
+      },
+      labels: {
+          type: Array,
+          default: function() {
+              return []
+          }
+      }
+  },
+  data() {
+    return {
+      options: {
+        responsive: true,
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                    callback: function(value) {
+                        return `${(value * 100).toFixed(2)}%`;
+                    }
+            },
+            }
+          ],
+          xAxes: [
+            {
+              type: "time",
+              unit: "day",
+              ticks: {
+                source: "labels",
+              },
+            },
+          ],
+        },
+      },
+    };
+  },
+  computed: {
+        chartData() {
+            return {
+                labels: this.labels,
+                datasets: [{
+                 label: this.series,
+                 data: this.region[this.series],
+                 borderColor: this.color,
+                 backgroundColor: 'rgba(0,0,0,0)'
+               }]
+            }
+      },
+      dataReady() {
+          return this.series && this.region && this.labels.length > 0
+      }
+  }
+};
+</script>
+
+<style>
+</style>
