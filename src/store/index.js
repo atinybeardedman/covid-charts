@@ -13,10 +13,11 @@ export default new Vuex.Store({
     loading: false,
     colors: colors,
     selectedCounty: "Region",
+    countyData: {},
   },
   getters: {
-    recentCountyData: (state, getters) => {
-      const countyData = getters.countyData;
+    recentCountyData: (state) => {
+      const countyData = state.countyData;
       const counties = state.counties;
       const recentCounty = {};
       if (JSON.stringify(countyData) === "{}") {
@@ -28,7 +29,6 @@ export default new Vuex.Store({
         for (const prop of Object.keys(county)) {
           if (typeof county[prop] !== "string") {
             const list = county[prop];
-            // console.log(list);
             if (list.length > 14) {
               result[prop] = county[prop].slice(county[prop].length - 14);
             } else {
@@ -42,39 +42,38 @@ export default new Vuex.Store({
       }
       return recentCounty;
     },
-    summaryCountyData: (state, getters) => {
-      const countyData = getters.recentCountyData;
-      if (JSON.stringify(countyData) === "{}") {
-        return {};
-      }
-      const result = {};
-      Object.keys(countyData).forEach((k) => {
-        const obj = {
-          name: k,
-          newCases: [...countyData[k].newCases].pop(),
-          totalTests: [...countyData[k].totalTests].pop(),
-          percentPositive: [...countyData[k].percentPositive].pop(),
-          rolling7Avg: [...countyData[k].rolling7Avg].pop(),
-          rolling14Avg: [...countyData[k].rolling14Avg].pop(),
-        };
-        result[k] = { ...obj };
-      });
-      return result;
-    },
-    countyData: (state) => getGroupedCountyData(state.data),
+    // summaryCountyData: (state, getters) => {
+    //   const countyData = getters.recentCountyData;
+    //   if (JSON.stringify(countyData) === "{}") {
+    //     return {};
+    //   }
+    //   const result = {};
+    //   Object.keys(countyData).forEach((k) => {
+    //     const obj = {
+    //       name: k,
+    //       newCases: [...countyData[k].newCases].pop(),
+    //       totalTests: [...countyData[k].totalTests].pop(),
+    //       percentPositive: [...countyData[k].percentPositive].pop(),
+    //       rolling7Avg: [...countyData[k].rolling7Avg].pop(),
+    //       rolling14Avg: [...countyData[k].rolling14Avg].pop(),
+    //     };
+    //     result[k] = { ...obj };
+    //   });
+    //   return result;
+    // },
     dates: (state) => [...new Set(state.data.map((d) => d.test_date))].sort(),
     recentDates: (state, getters) =>
       getters.dates.slice(getters.dates.length - 14),
     loading: (state) => state.loading,
-    selectedCountyData: (state, getters) => {
-      return getters.countyData[state.selectedCounty];
+    selectedCountyData: (state) => {
+      return state.countyData[state.selectedCounty];
     },
     selectedRecentCountyData: (state, getters) => {
       return getters.recentCountyData[state.selectedCounty];
     },
-    selectedCountySummary: (state, getters) => {
-      return getters.summaryCountyData[state.selectedCounty];
-    },
+    // selectedCountySummary: (state, getters) => {
+    //   return getters.summaryCountyData[state.selectedCounty];
+    // },
     selectedColor: (state) => {
       return colors[state.selectedCounty];
     },
@@ -82,6 +81,7 @@ export default new Vuex.Store({
   mutations: {
     SET_DATA(state, data) {
       state.data = data.sort(sortByDate);
+      state.countyData = getGroupedCountyData(state.data);
     },
     SET_LOADING(state, isLoading) {
       state.loading = isLoading;

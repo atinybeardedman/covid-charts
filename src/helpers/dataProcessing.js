@@ -1,3 +1,5 @@
+import { listProps } from "../constants/constants";
+
 /**
  * Summarize and group the API data by county
  * @param {Object[]} data - DoH API data in an array
@@ -89,8 +91,7 @@ const getGroupedCountyData = (data) => {
   const RegionPercentTemp =
     counties.Region.percentPositive[index] / (Object.keys(counties).length - 1);
   counties.Region.percentPositive[index] = round(RegionPercentTemp, 4);
-  // index++;
-  console.log(index)
+  
   if (index > 6) {
     const temp7 =
       counties.Region.rolling7Avg[index - 7] /
@@ -150,5 +151,21 @@ const sortByDate = (a, b) => {
     return 0;
   }
 };
+/**
+ * 
+ * @param {Object} countyData - county data
+ * @param {int} sliceAmount - amount of data to slice off the end
+ */
+const sliceData = (countyData, sliceAmount) => {
+  const result = {};
+    if(typeof countyData === 'undefined' || JSON.stringify(countyData) === "{}"){
+      return result
+    }
+    for(const prop of listProps){
+      const length = countyData[prop].length
+      result[prop] = countyData[prop].slice(length - sliceAmount);
+    }
+  return result
+}
 
-export { getGroupedCountyData, sortByDate };
+export { getGroupedCountyData, sortByDate, sliceData }

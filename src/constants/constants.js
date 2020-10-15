@@ -16,5 +16,13 @@ export const colors = {
   Sullivan: "#36a2eb",
   Ulster: "#9966ff",
   Westchester: "#c9cbcf",
-  Region: '#000'
+  Region: "#000",
 };
+
+export const listProps = [
+  "newCases",
+  "totalTests",
+  "percentPositive",
+  "rolling7Avg",
+  "rolling14Avg",
+];

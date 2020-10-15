@@ -16,7 +16,7 @@
         <v-row>
           
           <v-col>
-            <SummaryCard v-bind="selectedCountySummary" :color="selectedColor" />
+            <SummaryCard v-bind="selectedSummary" :color="selectedColor" />
           </v-col>
         </v-row>
         <v-row align="center">
@@ -83,6 +83,7 @@ import SummaryCard from "./components/SummaryCard";
 import StackedBar from "./components/StackedBar";
 import LineGraphParent from "./components/LineGraphParent";
 import { mapGetters, mapState } from "vuex";
+import { sliceData } from './helpers/dataProcessing';
 export default {
   name: "App",
 
@@ -97,15 +98,17 @@ export default {
     }
   },
   computed: {
-    ...mapState(["counties", "colors"]),
+     ...mapState(["counties", "colors", "selectedCounty"]),
     ...mapGetters([
       "recentCountyData",
-      "selectedCountySummary",
       "selectedRecentCountyData",
       "loading",
       "selectedColor",
       "recentDates",
     ]),
+    selectedSummary() {
+      return {...sliceData(this.selectedRecentCountyData, 2), name: this.selectedCounty}
+    },
     canLoadSelected () {
       return this.selectedRecentCountyData && JSON.stringify(this.selectedRecentCountyData) !== '{}'
     }
