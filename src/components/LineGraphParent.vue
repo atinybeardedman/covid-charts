@@ -36,6 +36,9 @@ export default {
     return {
       options: {
         responsive: true,
+        legend: {
+            display: false
+        },
         scales: {
           yAxes: [
             {

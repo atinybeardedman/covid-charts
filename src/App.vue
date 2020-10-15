@@ -13,37 +13,52 @@
 
     <v-main>
       <v-container fluid>
-        <v-row align="center">
-          <v-spacer></v-spacer>
-          <v-col :cols="4">
-            <SummaryCard v-bind="selectedCountySummary" />
+        <v-row>
+          
+          <v-col>
+            <SummaryCard v-bind="selectedCountySummary" :color="selectedColor" />
           </v-col>
-          <v-spacer></v-spacer>
         </v-row>
         <v-row align="center">
           <v-col :cols="4">
-            <LineGraphParent
-              :region="selectedRecentCountyData"
-              :labels="recentDates" 
-              series="percentPositive"
-              :color="selectedColor" 
-            ></LineGraphParent>
+            <v-card>
+              <v-card-title>Percent Positive</v-card-title>
+              <v-card-text>
+              <LineGraphParent
+                :region="selectedRecentCountyData"
+                :labels="recentDates" 
+                series="percentPositive"
+                :color="selectedColor" 
+              ></LineGraphParent>
+
+              </v-card-text>
+            </v-card>
           </v-col>
           <v-col :cols="4">
+            <v-card>
+              <v-card-title>7 Day Rolling Avg.</v-card-title>
+              <v-card-text>
             <LineGraphParent
               :region="selectedRecentCountyData"
               :labels="recentDates" 
               series="rolling7Avg"
               :color="selectedColor" 
             ></LineGraphParent>
+              </v-card-text>
+            </v-card>
           </v-col>
           <v-col :cols="4">
+            <v-card>
+              <v-card-title>Percent Positive</v-card-title>
+              <v-card-text>
             <LineGraphParent
               :region="selectedRecentCountyData"
               :labels="recentDates" 
               series="rolling14Avg"
               :color="selectedColor" 
             ></LineGraphParent>
+              </v-card-text>
+            </v-card>
           </v-col>
         </v-row>
         <v-row align="center">
