@@ -49,7 +49,7 @@
           </v-col>
           <v-col :cols="4">
             <v-card>
-              <v-card-title>Percent Positive</v-card-title>
+              <v-card-title>14 Day Rolling Avg.</v-card-title>
               <v-card-text>
             <LineGraphParent
               :region="selectedRecentCountyData"
