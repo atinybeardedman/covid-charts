@@ -20,4 +20,9 @@ const getAllData = () =>
       },
     })
 
-export { getAllData };
+const getUpdatedTimestamp = () => 
+  httpClient
+    .get(process.env.VUE_APP_META_URL)
+
+
+export { getAllData, getUpdatedTimestamp };

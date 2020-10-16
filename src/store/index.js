@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 Vue.use(Vuex);
-import { getAllData } from "../api/data";
+import { getAllData, getUpdatedTimestamp } from "../api/data";
 import { getGroupedCountyData, sortByDate } from "../helpers/dataProcessing";
 import { counties, colors } from "../constants/constants";
 
@@ -14,6 +14,7 @@ export default new Vuex.Store({
     colors: colors,
     selectedCounty: "Region",
     countyData: {},
+    updatedTimestamp: "",
   },
   getters: {
     recentCountyData: (state) => {
@@ -89,6 +90,9 @@ export default new Vuex.Store({
     SET_COUNTY(state, county) {
       state.selectedCounty = county;
     },
+    SET_TIMESTAMP(state, data) {
+      state.updatedTimestamp = data;
+    },
   },
   actions: {
     async getData({ commit }) {
@@ -97,6 +101,14 @@ export default new Vuex.Store({
         const response = await getAllData();
         commit("SET_DATA", response.data);
         commit("SET_LOADING", false);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getTimestamp({ commit }) {
+      try {
+        const resp = await getUpdatedTimestamp();
+        commit("SET_TIMESTAMP", resp.data.dataUpdatedAt);
       } catch (err) {
         console.log(err);
       }
