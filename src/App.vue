@@ -17,11 +17,8 @@
 
     <v-main>
       <v-container fluid>
-        <v-row>
-          <v-col>
-            <SummaryCard v-bind="selectedSummary" :color="selectedColor" />
-          </v-col>
-        </v-row>
+            <SummaryCards v-bind="selectedSummary" :color="selectedColor" />
+      
         <v-row align="center">
           <v-col :cols="4">
             <v-card>
@@ -80,7 +77,7 @@
 </template>
 
 <script>
-import SummaryCard from "./components/SummaryCard";
+import SummaryCards from "./components/SummaryCards";
 import StackedBar from "./components/StackedBar";
 import LineGraphParent from "./components/LineGraphParent";
 import { mapGetters, mapState } from "vuex";
@@ -89,7 +86,7 @@ export default {
   name: "App",
 
   components: {
-    SummaryCard,
+    SummaryCards,
     StackedBar,
     LineGraphParent,
   },
