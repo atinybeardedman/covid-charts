@@ -119,7 +119,7 @@ export default {
   },
   mounted: function () {
     this.$store.dispatch("getData");
-    this.$store.dispatch("getTimestamp")
+    // this.$store.dispatch("getTimestamp")
   },
 };
 </script>

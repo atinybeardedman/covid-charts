@@ -11,18 +11,17 @@ function getWhereString() {
   return str;
 }
 
-const getAllData = () =>
-  httpClient
-    .get(process.env.VUE_APP_BASE_URL, {
-      params: {
-        $where: getWhereString(),
-        $select: "test_date,county,new_positives,total_number_of_tests",
-      },
-    })
+const getAllData = (bustCache = false) => {
+  const params = {
+    $where: getWhereString(),
+    $select: "test_date,county,new_positives,total_number_of_tests",
+  };
+  if(bustCache){
+    params.cb = Date.now();
+  }
+  return httpClient.get(process.env.VUE_APP_BASE_URL, {
+    params
+  });
+};
 
-const getUpdatedTimestamp = () => 
-  httpClient
-    .get(process.env.VUE_APP_META_URL)
-
-
-export { getAllData, getUpdatedTimestamp };
+export { getAllData };

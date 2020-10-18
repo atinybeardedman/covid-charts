@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 Vue.use(Vuex);
-import { getAllData, getUpdatedTimestamp } from "../api/data";
+import { getAllData } from "../api/data";
 import { getGroupedCountyData, sortByDate } from "../helpers/dataProcessing";
 import { counties, colors } from "../constants/constants";
 
@@ -98,17 +98,16 @@ export default new Vuex.Store({
     async getData({ commit }) {
       try {
         commit("SET_LOADING", true);
-        const response = await getAllData();
+        let response = await getAllData();
+        const date = new Date(response.headers["last-modified"]);
+        const now = new Date();
+        const diff = now.getTime() - date.getTime();
+        if (diff > 12 * 3600 * 1000) {
+          response = await getAllData(true);
+        }
         commit("SET_DATA", response.data);
+        commit("SET_TIMESTAMP", response.headers["last-modified"]);
         commit("SET_LOADING", false);
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async getTimestamp({ commit }) {
-      try {
-        const resp = await getUpdatedTimestamp();
-        commit("SET_TIMESTAMP", resp.data.dataUpdatedAt);
       } catch (err) {
         console.log(err);
       }

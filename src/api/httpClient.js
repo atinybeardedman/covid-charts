@@ -3,7 +3,7 @@ const httpClient = axios.create({
     timeout: 1000,
     headers: {
         "Content-Type": "application/json",
-        "X-App-Token": process.env.VUE_APP_TOKEN
+        "X-App-Token": process.env.VUE_APP_TOKEN,
     }
 });
 
