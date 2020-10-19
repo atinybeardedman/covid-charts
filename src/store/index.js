@@ -99,14 +99,15 @@ export default new Vuex.Store({
       try {
         commit("SET_LOADING", true);
         let response = await getAllData();
-        const date = new Date(response.headers["last-modified"]);
-        const now = new Date();
-        const diff = now.getTime() - date.getTime();
-        if (diff > 12 * 3600 * 1000) {
-          response = await getAllData(true);
-        }
+        const lastModified = response.headers["last-modified"];
+        // const date = new Date(lastModified);
+        // const now = new Date();
+        // const diff = now.getTime() - date.getTime();
+        // if (diff > 12 * 3600 * 1000) {
+        //   response = await getAllData(lastModified);
+        // }
         commit("SET_DATA", response.data);
-        commit("SET_TIMESTAMP", response.headers["last-modified"]);
+        commit("SET_TIMESTAMP", lastModified);
         commit("SET_LOADING", false);
       } catch (err) {
         console.log(err);

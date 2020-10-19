@@ -11,17 +11,16 @@ function getWhereString() {
   return str;
 }
 
-const getAllData = (bustCache = false) => {
+const getAllData = () => {
   const params = {
     $where: getWhereString(),
     $select: "test_date,county,new_positives,total_number_of_tests",
   };
-  if(bustCache){
-    params.cb = Date.now();
+  const options = {params};
+  options.headers = {
+      'Cache-Control': `no-cache, max-age=${12*24*3600*1000}`
   }
-  return httpClient.get(process.env.VUE_APP_BASE_URL, {
-    params
-  });
+  return httpClient.get(process.env.VUE_APP_BASE_URL, options);
 };
 
 export { getAllData };
