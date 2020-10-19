@@ -1,9 +1,30 @@
 import httpClient from "./httpClient";
 import { counties } from "../constants/constants";
-function getWhereString() {
+
+/**
+ * Shuffle an array
+ * @param {Array} array - the arraw to shuffle
+ */
+function shuffle(array){
+  let current = array.length;
+  let tempVal, randomIndex;
+
+  while(0 !== current){
+    randomIndex = Math.floor(Math.random() * current);
+    current--;
+
+    tempVal = array[current];
+    array[current] = array[randomIndex];
+    array[randomIndex] = tempVal;
+  }
+  return array;
+}
+
+function getWhereString(shouldShuffle) {
   let str = "(";
-  const last = counties.pop();
-  for (const county of counties) {
+  const tempCounties = shouldShuffle ? shuffle(counties.slice()): counties.slice();
+  const last = tempCounties.pop();
+  for (const county of tempCounties) {
     str += `county = "${county}" OR `;
   }
   str += `county = "${last}"`;
@@ -11,15 +32,12 @@ function getWhereString() {
   return str;
 }
 
-const getAllData = () => {
+const getAllData = (shouldShuffle) => {
   const params = {
-    $where: getWhereString(),
+    $where: getWhereString(shouldShuffle),
     $select: "test_date,county,new_positives,total_number_of_tests",
   };
   const options = {params};
-  options.headers = {
-      'Cache-Control': `no-cache, max-age=${12*24*3600*1000}`
-  }
   return httpClient.get(process.env.VUE_APP_BASE_URL, options);
 };
 
