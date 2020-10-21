@@ -63,10 +63,10 @@
         <v-row align="center">
           <v-spacer></v-spacer>
           <v-col :cols="5">
-            <StackedBar
-              v-if="!loading"
-              :colordict="colors"
-              :chartdata="recentCountyData"
+            <StackedBarParent
+              :regions="recentCountyData"
+              :colors="colors"
+              :county="selectedCounty"
               :labels="recentDates"
           /></v-col>
           <v-spacer></v-spacer>
@@ -78,7 +78,7 @@
 
 <script>
 import SummaryCards from "./components/SummaryCards";
-import StackedBar from "./components/StackedBar";
+import StackedBarParent from "./components/StackedBarParent";
 import LineGraphParent from "./components/LineGraphParent";
 import { mapGetters, mapState } from "vuex";
 import { sliceData } from "./helpers/dataProcessing";
@@ -87,7 +87,7 @@ export default {
 
   components: {
     SummaryCards,
-    StackedBar,
+    StackedBarParent,
     LineGraphParent,
   },
   methods: {
