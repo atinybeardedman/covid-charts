@@ -1,24 +1,42 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Mid-Hudson Region COVID Trends</v-toolbar-title>
       <v-spacer></v-spacer>
-      <div>Last updated at: {{ new Date(updatedTimestamp).toLocaleString() }}</div>
-      <v-spacer></v-spacer>
-      <v-btn
-        @click="selectCounty(county)"
-        v-for="county in counties"
-        :key="county"
-        text
-      >
-        {{ county }}
-      </v-btn>
     </v-app-bar>
+    <v-navigation-drawer app v-model="drawer">
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title> Mid-Hudson COVID Data </v-list-item-title>
+          <v-list-item-subtitle> Select a region </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+      <v-divider></v-divider>
+      <v-list nav dense>
+        <v-list-item-group v-model="selectedIndex" :color="selectedColor">
+          <v-list-item
+            v-for="(county, i) in counties"
+            :key="i"
+            @click="selectCounty(county)"
+          >
+            <v-list-item-title>
+              {{ county }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+      <template v-slot:append>
+        <div class="caption text-center">
+          Updated at: {{ new Date(updatedTimestamp).toLocaleString() }}
+        </div>
+      </template>
+    </v-navigation-drawer>
 
     <v-main>
       <v-container fluid>
-            <SummaryCards v-bind="selectedSummary" :color="selectedColor" />
-      
+        <SummaryCards v-bind="selectedSummary" :color="selectedColor" />
+
         <v-row align="center" justify="space-around">
           <v-col :cols="12" :md="6" :lg="5">
             <v-card>
@@ -29,7 +47,7 @@
                   :colors="colors"
                   :county="selectedCounty"
                   :labels="recentDates"
-              />
+                />
               </v-card-text>
             </v-card>
           </v-col>
@@ -92,6 +110,11 @@ export default {
     StackedBarParent,
     LineGraphParent,
   },
+  data() {
+    return {
+      drawer: null,
+    };
+  },
   methods: {
     selectCounty(county) {
       this.$store.commit("SET_COUNTY", county);
@@ -106,6 +129,9 @@ export default {
       "selectedColor",
       "recentDates",
     ]),
+    selectedIndex() {
+      return this.counties.indexOf(this.selectedCounty);
+    },
     selectedSummary() {
       return {
         ...sliceData(this.selectedRecentCountyData, 2),
