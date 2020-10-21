@@ -115,6 +115,14 @@ export default {
       drawer: null,
     };
   },
+  watch: {
+    selectedIndex () {
+      if(this.$vuetify.breakpoint.mobile){
+
+        this.drawer = false;
+      }
+    }
+  },
   methods: {
     selectCounty(county) {
       this.$store.commit("SET_COUNTY", county);
