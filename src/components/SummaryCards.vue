@@ -1,9 +1,15 @@
 <template>
-    <v-row>
-      <v-col v-for="card in cards" :key="card.index">
-        <SummaryCard v-bind="card"></SummaryCard>
-      </v-col>
-    </v-row>
+  <v-row justify="center" class="flex-lg-nowrap">
+    <v-col
+      :cols="12"
+      :sm="4"
+      class="flex-md-shrink-1"
+      v-for="card in cards"
+      :key="card.index"
+    >
+      <SummaryCard v-bind="card"></SummaryCard>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -46,7 +52,7 @@ export default {
           },
           {
             index: 2,
-            lastValue: this.renderPercent(this.percentPositive[0]), 
+            lastValue: this.renderPercent(this.percentPositive[0]),
             value: this.renderPercent(this.percentPositive[1]),
             description: "Percent Positive",
             isIncr: this.isIncr(this.percentPositive),

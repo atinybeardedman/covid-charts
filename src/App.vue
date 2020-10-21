@@ -19,8 +19,21 @@
       <v-container fluid>
             <SummaryCards v-bind="selectedSummary" :color="selectedColor" />
       
-        <v-row align="center">
-          <v-col :cols="4">
+        <v-row align="center" justify="space-around">
+          <v-col :cols="12" :md="6" :lg="5">
+            <v-card>
+              <v-card-title>New Cases</v-card-title>
+              <v-card-text>
+                <StackedBarParent
+                  :regions="recentCountyData"
+                  :colors="colors"
+                  :county="selectedCounty"
+                  :labels="recentDates"
+              />
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col :cols="12" :md="6" :lg="5">
             <v-card>
               <v-card-title>Percent Positive</v-card-title>
               <v-card-text>
@@ -33,7 +46,7 @@
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col :cols="4">
+          <v-col :cols="12" :md="6" :lg="5">
             <v-card>
               <v-card-title>7 Day Rolling Avg.</v-card-title>
               <v-card-text>
@@ -46,7 +59,7 @@
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col :cols="4">
+          <v-col :cols="12" :md="6" :lg="5">
             <v-card>
               <v-card-title>14 Day Rolling Avg.</v-card-title>
               <v-card-text>
@@ -59,17 +72,6 @@
               </v-card-text>
             </v-card>
           </v-col>
-        </v-row>
-        <v-row align="center">
-          <v-spacer></v-spacer>
-          <v-col :cols="5">
-            <StackedBarParent
-              :regions="recentCountyData"
-              :colors="colors"
-              :county="selectedCounty"
-              :labels="recentDates"
-          /></v-col>
-          <v-spacer></v-spacer>
         </v-row>
       </v-container>
     </v-main>
