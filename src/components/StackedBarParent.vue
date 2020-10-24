@@ -35,6 +35,18 @@ export default {
        return {
       options: {
         responsive: true,
+         tooltips: {
+          displayColors: false,
+          callbacks: {
+            title: function(tooltipItems){
+              let title = '';
+              if(tooltipItems.length > 0){
+                title = new Date(tooltipItems[0].label).toLocaleDateString();
+              }
+              return title;
+            }
+          },
+        },
         scales: {
           yAxes: [
             {
