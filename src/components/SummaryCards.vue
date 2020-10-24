@@ -1,5 +1,5 @@
 <template>
-  <v-row justify="center" class="flex-lg-nowrap">
+  <v-row v-if="$vuetify.breakpoint.mdAndUp" justify="center" class="flex-lg-nowrap">
     <v-col
       :cols="12"
       :sm="4"
@@ -10,14 +10,21 @@
       <SummaryCard v-bind="card"></SummaryCard>
     </v-col>
   </v-row>
+  <v-row v-else justify="center">
+    <v-col>
+      <CollatedSummaryCard :name="name" :dataSet="cards"/>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import SummaryCard from "./SummaryCard";
+import CollatedSummaryCard from "./CollatedSummaryCard";
 export default {
   name: "SummaryCards",
   components: {
     SummaryCard,
+    CollatedSummaryCard
   },
   props: {
     name: String,

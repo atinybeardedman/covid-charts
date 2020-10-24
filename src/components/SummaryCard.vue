@@ -1,29 +1,7 @@
 <template>
   <v-card :loading="loading">
     <v-container>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon
-            v-bind="attrs"
-            v-on="on"
-            color="red"
-            v-if="isIncr"
-            class="float-right"
-            large
-            >mdi-trending-up</v-icon
-          >
-          <v-icon
-            v-bind="attrs"
-            v-on="on"
-            color="green"
-            v-else
-            class="float-right"
-            large
-            >mdi-trending-down</v-icon
-          >
-        </template>
-        <span>Yesterday: {{ lastValue }}</span>
-      </v-tooltip>
+      <TrendIcon :isIncr="isIncr" :lastValue="lastValue" />
       <v-row align="center">
         <v-col>
           <h4 class="text-h4 text-center">
@@ -37,8 +15,12 @@
 </template>
 
 <script>
+import TrendIcon from './TrendIcon';
 export default {
   name: "SummmaryCard",
+  components: {
+    TrendIcon
+  },
   props: {
     value: String,
     lastValue: String,
