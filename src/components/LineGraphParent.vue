@@ -62,6 +62,7 @@ export default {
                 callback: function (value) {
                   return `${(value * 100).toFixed(2)}%`;
                 },
+                suggestedMin: 0
               },
             },
           ],
