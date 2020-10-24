@@ -14,7 +14,7 @@
       </v-list-item>
       <v-divider></v-divider>
       <v-list nav dense>
-        <v-list-item-group v-model="selectedIndex" :color="selectedColor">
+        <v-list-item-group :value="selectedIndex" :color="selectedColor">
           <v-list-item
             v-for="(county, i) in counties"
             :key="i"
