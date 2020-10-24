@@ -26,9 +26,9 @@
       </v-tooltip>
       <v-row align="center">
         <v-col>
-          <h1 class="text-lg-h2 text-sm-h3 text-h3 text-center">
+          <h4 class="text-h4 text-center">
             {{ value }}
-          </h1>
+          </h4>
           <div class="text-subtitle-1 text-center">{{ description }}</div>
         </v-col>
       </v-row>
