@@ -4,8 +4,8 @@
       :cols="12"
       :sm="4"
       class="flex-md-shrink-1"
-      v-for="card in cards"
-      :key="card.index"
+      v-for="(card, i) in cards"
+      :key="i"
     >
       <SummaryCard v-bind="card"></SummaryCard>
     </v-col>
@@ -33,7 +33,6 @@ export default {
       if (this.newCases) {
         return [
           {
-            index: 0,
             value: `${this.newCases[1]}`,
             lastValue: `${this.newCases[0]}`,
             description: "New Cases",
@@ -42,7 +41,6 @@ export default {
             loading: false,
           },
           {
-            index: 1,
             value: `${this.totalTests[1]}`,
             lastValue: `${this.totalTests[0]}`,
             description: "Total Tests",
@@ -51,16 +49,14 @@ export default {
             loading: false,
           },
           {
-            index: 2,
             lastValue: this.renderPercent(this.percentPositive[0]),
             value: this.renderPercent(this.percentPositive[1]),
-            description: "Percent Positive",
+            description: "% Positive",
             isIncr: this.isIncr(this.percentPositive),
             color: this.color,
             loading: false,
           },
           {
-            index: 3,
             lastValue: this.renderPercent(this.rolling7Avg[0]),
             value: this.renderPercent(this.rolling7Avg[1]),
             description: "7 Day Avg.",
@@ -69,7 +65,6 @@ export default {
             loading: false,
           },
           {
-            index: 4,
             lastValue: this.renderPercent(this.rolling14Avg[0]),
             value: this.renderPercent(this.rolling14Avg[1]),
             description: "14 Day Avg",
@@ -81,23 +76,18 @@ export default {
       } else {
         return [
           {
-            index: 0,
             loading: true,
           },
           {
-            index: 1,
             loading: true,
           },
           {
-            index: 2,
             loading: true,
           },
           {
-            index: 3,
             loading: true,
           },
           {
-            index: 4,
             loading: true,
           },
         ];
