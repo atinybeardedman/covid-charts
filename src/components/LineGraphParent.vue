@@ -70,6 +70,9 @@ export default {
             {
               type: "time",
               unit: "day",
+               time: {
+                minUnit: 'day'
+              },
               ticks: {
                 source: "auto",
               },
