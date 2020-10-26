@@ -59,7 +59,7 @@ export default {
               unit: 'day',
               stacked: true,
               ticks: {
-                  source: 'labels'
+                  source: 'auto'
               }
             },
           ],

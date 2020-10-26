@@ -4,6 +4,23 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Mid-Hudson Region COVID Trends</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-menu bottom left>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon dark v-bind="attrs" v-on="on">
+            <v-icon>mdi-chart-timeline</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item-group :value="timeRangeMode">
+            <v-list-item
+              @click="selectTimeRange(index)"
+              v-for="(option, index) in timeRangeOptions"
+              :key="index"
+              >{{ option }}</v-list-item
+            >
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
     </v-app-bar>
     <v-navigation-drawer app v-model="drawer">
       <v-list-item>
@@ -43,10 +60,10 @@
               <v-card-title>New Cases</v-card-title>
               <v-card-text>
                 <StackedBarParent
-                  :regions="recentCountyData"
+                  :regions="currentCountyData"
                   :colors="colors"
                   :county="selectedCounty"
-                  :labels="recentDates"
+                  :labels="dates"
                 />
               </v-card-text>
             </v-card>
@@ -56,8 +73,8 @@
               <v-card-title>Percent Positive</v-card-title>
               <v-card-text>
                 <LineGraphParent
-                  :region="selectedRecentCountyData"
-                  :labels="recentDates"
+                  :region="selectedCountyData"
+                  :labels="dates"
                   series="percentPositive"
                   :color="selectedColor"
                 ></LineGraphParent>
@@ -69,8 +86,8 @@
               <v-card-title>7 Day Rolling Avg.</v-card-title>
               <v-card-text>
                 <LineGraphParent
-                  :region="selectedRecentCountyData"
-                  :labels="recentDates"
+                  :region="selectedCountyData"
+                  :labels="getDates(7)"
                   series="rolling7Avg"
                   :color="selectedColor"
                 ></LineGraphParent>
@@ -82,8 +99,8 @@
               <v-card-title>14 Day Rolling Avg.</v-card-title>
               <v-card-text>
                 <LineGraphParent
-                  :region="selectedRecentCountyData"
-                  :labels="recentDates"
+                  :region="selectedCountyData"
+                  :labels="getDates(14)"
                   series="rolling14Avg"
                   :color="selectedColor"
                 ></LineGraphParent>
@@ -113,49 +130,60 @@ export default {
   data() {
     return {
       drawer: null,
+      timeRangeOptions: ["Last 2 Weeks", "Since June 1st"],
     };
   },
   watch: {
-    selectedIndex () {
-      if(this.$vuetify.breakpoint.mobile){
-
+    selectedIndex() {
+      if (this.$vuetify.breakpoint.mobile) {
         this.drawer = false;
       }
-    }
+    },
   },
   methods: {
     selectCounty(county) {
       this.$store.commit("SET_COUNTY", county);
     },
+    selectTimeRange(index) {
+      this.$store.commit("TOGGLE_TIMERANGE", index);
+    },
+    getDates(offset){
+        return this.timeRangeMode === 1 ? this.dates.slice(offset) : this.dates;
+    }
   },
   computed: {
-    ...mapState(["counties", "colors", "selectedCounty", "updatedTimestamp"]),
+    ...mapState([
+      "counties",
+      "colors",
+      "selectedCounty",
+      "updatedTimestamp",
+      "timeRangeMode",
+    ]),
     ...mapGetters([
-      "recentCountyData",
-      "selectedRecentCountyData",
+      "currentCountyData",
+      "selectedCountyData",
       "loading",
       "selectedColor",
-      "recentDates",
+      "dates",
     ]),
     selectedIndex() {
       return this.counties.indexOf(this.selectedCounty);
     },
     selectedSummary() {
       return {
-        ...sliceData(this.selectedRecentCountyData, 2),
+        ...sliceData(this.selectedCountyData, 2),
         name: this.selectedCounty,
       };
     },
     canLoadSelected() {
       return (
-        this.selectedRecentCountyData &&
-        JSON.stringify(this.selectedRecentCountyData) !== "{}"
+        this.selectedCountyData &&
+        JSON.stringify(this.selectedCountyData) !== "{}"
       );
     },
   },
   mounted: function () {
     this.$store.dispatch("getData");
-    // this.$store.dispatch("getTimestamp")
   },
 };
 </script>

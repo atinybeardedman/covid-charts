@@ -71,7 +71,7 @@ export default {
               type: "time",
               unit: "day",
               ticks: {
-                source: "labels",
+                source: "auto",
               },
             },
           ],

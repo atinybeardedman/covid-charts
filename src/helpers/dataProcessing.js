@@ -162,7 +162,7 @@ const sliceData = (countyData, sliceAmount) => {
       return result
     }
     for(const prop of listProps){
-      const length = countyData[prop].length
+      const length = countyData[prop].length;
       result[prop] = countyData[prop].slice(length - sliceAmount);
     }
   return result
