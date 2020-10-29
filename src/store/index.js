@@ -75,12 +75,13 @@ export default new Vuex.Store({
       try {
         commit("SET_LOADING", true);
         let response = await getAllData();
-        const lastModified = response.headers["last-modified"];
+        let lastModified = response.headers["last-modified"];
         const date = new Date(lastModified);
         const now = new Date();
         const diff = now.getTime() - date.getTime();
         if (diff > 16 * 3600 * 1000) {
           response = await getAllData(true);
+          lastModified = response.headers["last-modified"];
         }
         commit("SET_DATA", response.data);
         commit("SET_TIMESTAMP", lastModified);
