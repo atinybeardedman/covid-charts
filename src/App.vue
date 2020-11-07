@@ -70,6 +70,20 @@
           </v-col>
           <v-col :cols="12" :md="6" :lg="5">
             <v-card>
+              <v-card-title>Cases per 100k</v-card-title>
+              <v-card-text>
+                <LineGraphParent
+                  :region="selectedCountyData"
+                  :labels="getDates(7)"
+                  series="rollingCaseAvg"
+                  :color="selectedColor"
+                  graphType="number"
+                ></LineGraphParent>
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col :cols="12" :md="6" :lg="5">
+            <v-card>
               <v-card-title>Percent Positive</v-card-title>
               <v-card-text>
                 <LineGraphParent
@@ -89,19 +103,6 @@
                   :region="selectedCountyData"
                   :labels="getDates(7)"
                   series="rolling7Avg"
-                  :color="selectedColor"
-                ></LineGraphParent>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col :cols="12" :md="6" :lg="5">
-            <v-card>
-              <v-card-title>14 Day Rolling Avg.</v-card-title>
-              <v-card-text>
-                <LineGraphParent
-                  :region="selectedCountyData"
-                  :labels="getDates(14)"
-                  series="rolling14Avg"
                   :color="selectedColor"
                 ></LineGraphParent>
               </v-card-text>

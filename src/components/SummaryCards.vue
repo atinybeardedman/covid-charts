@@ -1,5 +1,9 @@
 <template>
-  <v-row v-if="$vuetify.breakpoint.mdAndUp" justify="center" class="flex-lg-nowrap">
+  <v-row
+    v-if="$vuetify.breakpoint.mdAndUp"
+    justify="center"
+    class="flex-lg-nowrap"
+  >
     <v-col
       :cols="12"
       :sm="4"
@@ -12,7 +16,7 @@
   </v-row>
   <v-row v-else justify="center">
     <v-col>
-      <CollatedSummaryCard :name="name" :dataSet="cards"/>
+      <CollatedSummaryCard :name="name" :dataSet="cards" />
     </v-col>
   </v-row>
 </template>
@@ -24,7 +28,7 @@ export default {
   name: "SummaryCards",
   components: {
     SummaryCard,
-    CollatedSummaryCard
+    CollatedSummaryCard,
   },
   props: {
     name: String,
@@ -32,7 +36,7 @@ export default {
     totalTests: Array,
     percentPositive: Array,
     rolling7Avg: Array,
-    rolling14Avg: Array,
+    rollingCaseAvg: Array,
     color: String,
   },
   computed: {
@@ -56,6 +60,14 @@ export default {
             loading: false,
           },
           {
+            lastValue: `${this.rollingCaseAvg[0]}`,
+            value: `${this.rollingCaseAvg[1]}`,
+            description: "7 Day Cases Per 100k",
+            isIncr: this.isIncr(this.rollingCaseAvg),
+            color: this.color,
+            loading: false,
+          },
+          {
             lastValue: this.renderPercent(this.percentPositive[0]),
             value: this.renderPercent(this.percentPositive[1]),
             description: "% Positive",
@@ -68,14 +80,6 @@ export default {
             value: this.renderPercent(this.rolling7Avg[1]),
             description: "7 Day Avg.",
             isIncr: this.isIncr(this.rolling7Avg),
-            color: this.color,
-            loading: false,
-          },
-          {
-            lastValue: this.renderPercent(this.rolling14Avg[0]),
-            value: this.renderPercent(this.rolling14Avg[1]),
-            description: "14 Day Avg",
-            isIncr: this.isIncr(this.rolling14Avg),
             color: this.color,
             loading: false,
           },

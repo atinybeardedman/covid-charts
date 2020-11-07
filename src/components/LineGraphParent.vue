@@ -31,8 +31,13 @@ export default {
         return [];
       },
     },
+    graphType: {
+      type: String,
+      default: 'percentage'
+    }
   },
   data() {
+    const componentThis = this;
     return {
       options: {
         responsive: true,
@@ -43,7 +48,7 @@ export default {
           displayColors: false,
           callbacks: {
             label: function (tooltipItem) {
-              const label = `${(tooltipItem.value * 100).toFixed(2)}%`;
+              const label = componentThis.graphType === 'percentage' ? `${(tooltipItem.value * 100).toFixed(2)}%` : tooltipItem.value;
               return label;
             },
             title: function(tooltipItems){
@@ -60,7 +65,7 @@ export default {
             {
               ticks: {
                 callback: function (value) {
-                  return `${(value * 100).toFixed(2)}%`;
+                  return componentThis.graphType === 'percentage' ? `${(value * 100).toFixed(2)}%` : value;
                 },
                 suggestedMin: 0
               },

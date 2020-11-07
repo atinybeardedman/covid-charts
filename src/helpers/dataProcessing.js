@@ -1,4 +1,4 @@
-import { listProps } from "../constants/constants";
+import { listProps, population } from "../constants/constants";
 
 /**
  * Summarize and group the API data by county
@@ -16,7 +16,7 @@ const getGroupedCountyData = (data) => {
       totalTests: [0],
       percentPositive: [0],
       rolling7Avg: [0],
-      rolling14Avg: [0],
+      rollingCaseAvg: [0],
     },
   };
   let index = 0;
@@ -32,20 +32,19 @@ const getGroupedCountyData = (data) => {
       index++;
       date = point.test_date;
       if (index > 7) {
+        // rolling positive percentage 
         const temp7 =
           counties.Region.rolling7Avg[index - 8] /
           (Object.keys(counties).length - 1);
         counties.Region.rolling7Avg[index - 8] = round(temp7, 4);
         counties.Region.rolling7Avg.push(0);
+
+        // rolling case avg.
+        const caseAvg = counties.Region.rollingCaseAvg[index - 8] / (Object.keys(counties).length - 1);
+        counties.Region.rollingCaseAvg[index - 8] = round(caseAvg, 1)
+        counties.Region.rollingCaseAvg.push(0);
       }
 
-      if (index > 14) {
-        const temp14 =
-          counties.Region.rolling14Avg[index - 15] /
-          (Object.keys(counties).length - 1);
-        counties.Region.rolling14Avg[index - 15] = round(temp14, 4);
-        counties.Region.rolling14Avg.push(0);
-      }
 
       for (const prop of propsToIncrement) {
         counties.Region[prop].push(0);
@@ -57,7 +56,7 @@ const getGroupedCountyData = (data) => {
         totalTests: [],
         percentPositive: [],
         rolling7Avg: [],
-        rolling14Avg: [],
+        rollingCaseAvg: [],
       };
     }
     counties[county].newCases.push(parseInt(point.new_positives));
@@ -66,20 +65,20 @@ const getGroupedCountyData = (data) => {
       round(point.new_positives / point.total_number_of_tests, 4)
     );
     if (index > 6) {
+      // percent avg
       const county7Avg = round(
         avg(counties[county].percentPositive.slice(index - 7, index)),
         4
       );
       counties[county].rolling7Avg[index - 7] = county7Avg;
       counties.Region.rolling7Avg[index - 7] += county7Avg;
-    }
-    if (index > 13) {
-      const county14Avg = round(
-        avg(counties[county].percentPositive.slice(index - 14, index)),
-        4
-      );
-      counties[county].rolling14Avg[index - 14] = county14Avg;
-      counties.Region.rolling14Avg[index - 14] += county14Avg;
+
+      // case avg
+
+      let countyCaseAvg = calcCasePer100k(
+        avg(counties[county].newCases.slice(index - 7, index)), county);
+      counties[county].rollingCaseAvg[index - 7] = countyCaseAvg;
+      counties.Region.rollingCaseAvg[index - 7] += countyCaseAvg;
     }
 
     // update summary for whole region
@@ -93,27 +92,33 @@ const getGroupedCountyData = (data) => {
   counties.Region.percentPositive[index] = round(RegionPercentTemp, 4);
   
   if (index > 6) {
+    // percentage avg
     const temp7 =
       counties.Region.rolling7Avg[index - 7] /
       (Object.keys(counties).length - 1);
     counties.Region.rolling7Avg[index - 7] = round(temp7, 4);
+
+    // case avg.
+    const tempCases =
+    counties.Region.rollingCaseAvg[index - 7] /
+    (Object.keys(counties).length - 1);
+  counties.Region.rollingCaseAvg[index - 7] = round(tempCases, 1);
     
   }
 
-  if (index > 13) {
-    const temp14 =
-      counties.Region.rolling14Avg[index - 14] /
-      (Object.keys(counties).length - 1);
-    counties.Region.rolling14Avg[index - 14] = round(temp14, 4);
-  }
-  const dataLength = counties.Region.percentPositive.length;
-  const last7Day = avg(counties.Region.percentPositive.slice(dataLength - 7));
-  const last14Day = avg(counties.Region.percentPositive.slice(dataLength - 14));
-  counties.Region.rolling7Avg.push(round(last7Day, 4));
-  counties.Region.rolling14Avg.push(round(last14Day, 4));
-
-
+  // last day never gets added since the loop ends
+  for(const county of Object.keys(counties)){
+    const dataLength = counties[county].percentPositive.length;
+    const last7Day = avg(counties[county].percentPositive.slice(dataLength - 7));
+    counties[county].rolling7Avg.push(round(last7Day, 4));
   
+    const casesLength = counties[county].newCases.length;
+    const cases7Day = avg(counties[county].newCases.slice(casesLength - 7));
+    counties[county].rollingCaseAvg.push(round(calcCasePer100k(cases7Day, county), 1));
+    
+  }
+
+
   return counties;
 };
 /**
@@ -166,6 +171,17 @@ const sliceData = (countyData, sliceAmount) => {
       result[prop] = countyData[prop].slice(length - sliceAmount);
     }
   return result
+}
+
+/**
+ * 
+ * @param {float} caseAvg - case avg
+ * @param {string} countyName - case avg
+ */
+const calcCasePer100k = (caseAvg, countyName) => {
+  const countyPop = population[countyName];
+  const avg = round((caseAvg / countyPop) * 100000, 1);
+  return avg;
 }
 
 export { getGroupedCountyData, sortByDate, sliceData }

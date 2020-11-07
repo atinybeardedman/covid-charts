@@ -8,6 +8,18 @@ export const counties = [
   "Westchester",
 ];
 
+export const population = {
+  Dutchess: 294218,
+  Orange: 384940,
+  Putnam: 98320,
+  Rockland: 325789,
+  Sullivan: 75432,
+  Ulster: 177573,
+  Westchester: 967506,
+  Region: 2323778,
+}
+
+
 export const colors = {
   Dutchess: "#ff6384",
   Orange: "#ff9f40",
@@ -24,5 +36,5 @@ export const listProps = [
   "totalTests",
   "percentPositive",
   "rolling7Avg",
-  "rolling14Avg",
+  "rollingCaseAvg",
 ];
