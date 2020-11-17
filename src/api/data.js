@@ -3,7 +3,7 @@ import { counties } from "../constants/constants";
 
 /**
  * Shuffle an array
- * @param {Array} array - the arraw to shuffle
+ * @param {Array} array - the array to shuffle
  */
 function shuffle(array){
   let current = array.length;
@@ -28,7 +28,7 @@ function getWhereString(shouldShuffle) {
     str += `county = "${county}" OR `;
   }
   str += `county = "${last}"`;
-  str += `) AND (test_date >= "2020-07-01")`;
+  str += `) AND (test_date >= "2020-03-01")`;
   return str;
 }
 
@@ -36,6 +36,7 @@ const getAllData = (shouldShuffle) => {
   const params = {
     $where: getWhereString(shouldShuffle),
     $select: "test_date,county,new_positives,total_number_of_tests",
+    $limit: 50000
   };
   const options = {params};
   return httpClient.get(process.env.VUE_APP_BASE_URL, options);

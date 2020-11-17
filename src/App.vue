@@ -131,7 +131,7 @@ export default {
   data() {
     return {
       drawer: null,
-      timeRangeOptions: ["Last 2 Weeks", "Since July 1st"],
+      timeRangeOptions: ["Last 2 Weeks", "Since March 1st"],
     };
   },
   watch: {
