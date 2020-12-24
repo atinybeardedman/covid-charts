@@ -8,18 +8,6 @@ export const counties = [
   "Westchester",
 ];
 
-export const population = {
-  Dutchess: 294218,
-  Orange: 384940,
-  Putnam: 98320,
-  Rockland: 325789,
-  Sullivan: 75432,
-  Ulster: 177573,
-  Westchester: 967506,
-  Region: 2323778,
-}
-
-
 export const colors = {
   Dutchess: "#ff6384",
   Orange: "#ff9f40",
@@ -38,3 +26,73 @@ export const listProps = [
   "rolling7Avg",
   "rollingCaseAvg",
 ];
+
+export const regionDict = {
+  "Western New York": [
+    "Allegany",
+    "Cattaraugus",
+    "Chautauqua",
+    "Erie",
+    "Niagara",
+  ],
+  "Finger Lakes": [
+    "Genesee",
+    "Livingston",
+    "Monroe",
+    "Ontario",
+    "Orleans",
+    "Seneca",
+    "Wayne",
+    "Wyoming",
+    "Yates",
+  ],
+  "Southern Tier": [
+    "Broome",
+    "Chemung",
+    "Chenango",
+    "Delaware",
+    "Schuyler",
+    "Steuben",
+    "Tioga",
+    "Tompkins",
+  ],
+  "Central New York": ["Cayuga", "Cortland", "Madison", "Onondaga", "Oswego"],
+  "Mohawk Valley": [
+    "Fulton",
+    "Herkimer",
+    "Montgomery",
+    "Oneida",
+    "Otsego",
+    "Schoharie",
+  ],
+  "North Country": [
+    "Clinton",
+    "Essex",
+    "Franklin",
+    "Hamilton",
+    "Jefferson",
+    "Lewis",
+    "St. Lawrence",
+  ],
+  "Capital Region": [
+    "Albany",
+    "Columbia",
+    "Greene",
+    "Saratoga",
+    "Schenectady",
+    "Rensselaer",
+    "Warren",
+    "Washington",
+  ],
+  "Mid-Hudson": [
+    "Dutchess",
+    "Orange",
+    "Putnam",
+    "Rockland",
+    "Sullivan",
+    "Ulster",
+    "Westchester",
+  ],
+  "New York City": ["Bronx", "Kings", "New York", "Richmond", "Queens"],
+  "Long Island": ["Nassau", "Suffolk"],
+};

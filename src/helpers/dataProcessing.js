@@ -1,4 +1,5 @@
-import { listProps, population } from "../constants/constants";
+import { listProps } from "../constants/constants";
+import { population } from "../constants/popDict";
 
 /**
  * Summarize and group the API data by county
@@ -76,7 +77,7 @@ const getGroupedCountyData = (data) => {
       // case avg
 
       let countyCaseAvg = calcCasePer100k(
-        avg(counties[county].newCases.slice(index - 7, index)), county);
+        avg(counties[county].newCases.slice(index - 7, index)), population[county]);
       counties[county].rollingCaseAvg[index - 7] = countyCaseAvg;
       counties.Region.rollingCaseAvg[index - 7] += countyCaseAvg;
     }
@@ -114,7 +115,7 @@ const getGroupedCountyData = (data) => {
   
     const casesLength = counties[county].newCases.length;
     const cases7Day = avg(counties[county].newCases.slice(casesLength - 7));
-    counties[county].rollingCaseAvg.push(round(calcCasePer100k(cases7Day, county), 1));
+    counties[county].rollingCaseAvg.push(round(calcCasePer100k(cases7Day, population[county]), 1));
     
   }
 
@@ -176,12 +177,12 @@ const sliceData = (countyData, sliceAmount) => {
 /**
  * 
  * @param {float} caseAvg - case avg
- * @param {string} countyName - case avg
+ * @param {string} countyPop- county population
  */
-const calcCasePer100k = (caseAvg, countyName) => {
-  const countyPop = population[countyName];
+const calcCasePer100k = (caseAvg, countyPop) => {
   const avg = round((caseAvg / countyPop) * 100000, 1);
   return avg;
 }
+
 
 export { getGroupedCountyData, sortByDate, sliceData }

@@ -5,11 +5,11 @@ import { counties } from "../constants/constants";
  * Shuffle an array
  * @param {Array} array - the array to shuffle
  */
-function shuffle(array){
+function shuffle(array) {
   let current = array.length;
   let tempVal, randomIndex;
 
-  while(0 !== current){
+  while (0 !== current) {
     randomIndex = Math.floor(Math.random() * current);
     current--;
 
@@ -22,7 +22,9 @@ function shuffle(array){
 
 function getWhereString(shouldShuffle) {
   let str = "(";
-  const tempCounties = shouldShuffle ? shuffle(counties.slice()): counties.slice();
+  const tempCounties = shouldShuffle
+    ? shuffle(counties.slice())
+    : counties.slice();
   const last = tempCounties.pop();
   for (const county of tempCounties) {
     str += `county = "${county}" OR `;
@@ -36,10 +38,12 @@ const getAllData = (shouldShuffle) => {
   const params = {
     $where: getWhereString(shouldShuffle),
     $select: "test_date,county,new_positives,total_number_of_tests",
-    $limit: 50000
+    $limit: 50000,
   };
-  const options = {params};
+  const options = { params };
   return httpClient.get(process.env.VUE_APP_BASE_URL, options);
 };
 
-export { getAllData };
+
+
+export { getAllData};
