@@ -25,7 +25,7 @@ export default {
     value: String,
     lastValue: String,
     description: String,
-    isIncr: Boolean,
+    isIncr: Number,
     loading: Boolean,
     color: String,
   },

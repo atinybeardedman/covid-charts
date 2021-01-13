@@ -111,7 +111,13 @@ export default {
     },
     isIncr(list) {
       if (list && list.length > 1) {
-        return list[0] < list[1];
+        if(list[0] == list[1]){
+          return 0
+        } else if(list[0] < list[1]){
+          return 1
+        } else {
+          return -1;
+        }
       }
       return false;
     },
