@@ -1,23 +1,16 @@
-export const counties = [
-  "Dutchess",
-  "Orange",
-  "Putnam",
-  "Rockland",
-  "Sullivan",
-  "Ulster",
-  "Westchester",
-];
 
-export const colors = {
-  Dutchess: "#ff6384",
-  Orange: "#ff9f40",
-  Putnam: "#ffcd56",
-  Rockland: "#4bc0c0",
-  Sullivan: "#36a2eb",
-  Ulster: "#9966ff",
-  Westchester: "#c9cbcf",
-  Region: "#000",
-};
+
+export const colors = [
+   "#ff6384",
+   "#ff9f40",
+   "#ffcd56",
+   "#a5c78B",
+   "#4bc0c0",
+   "#36a2eb",
+   "#9966ff",
+   "#b199e7",
+   "#c9cbcf",
+];
 
 export const listProps = [
   "newCases",
@@ -28,14 +21,14 @@ export const listProps = [
 ];
 
 export const regionDict = {
-  "Western New York": [
+  "Western-New-York": [
     "Allegany",
     "Cattaraugus",
     "Chautauqua",
     "Erie",
     "Niagara",
   ],
-  "Finger Lakes": [
+  "Finger-Lakes": [
     "Genesee",
     "Livingston",
     "Monroe",
@@ -46,7 +39,7 @@ export const regionDict = {
     "Wyoming",
     "Yates",
   ],
-  "Southern Tier": [
+  "Southern-Tier": [
     "Broome",
     "Chemung",
     "Chenango",
@@ -56,8 +49,8 @@ export const regionDict = {
     "Tioga",
     "Tompkins",
   ],
-  "Central New York": ["Cayuga", "Cortland", "Madison", "Onondaga", "Oswego"],
-  "Mohawk Valley": [
+  "Central-New-York": ["Cayuga", "Cortland", "Madison", "Onondaga", "Oswego"],
+  "Mohawk-Valley": [
     "Fulton",
     "Herkimer",
     "Montgomery",
@@ -65,7 +58,7 @@ export const regionDict = {
     "Otsego",
     "Schoharie",
   ],
-  "North Country": [
+  "North-Country": [
     "Clinton",
     "Essex",
     "Franklin",
@@ -74,7 +67,7 @@ export const regionDict = {
     "Lewis",
     "St. Lawrence",
   ],
-  "Capital Region": [
+  "Capital-Region": [
     "Albany",
     "Columbia",
     "Greene",
@@ -93,6 +86,6 @@ export const regionDict = {
     "Ulster",
     "Westchester",
   ],
-  "New York City": ["Bronx", "Kings", "New York", "Richmond", "Queens"],
-  "Long Island": ["Nassau", "Suffolk"],
+  "New-York-City": ["Bronx", "Kings", "New York", "Richmond", "Queens"],
+  "Long-Island": ["Nassau", "Suffolk"],
 };
