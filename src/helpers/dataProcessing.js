@@ -1,127 +1,162 @@
-import { listProps } from "../constants/constants";
+import { listProps, regionDict } from "../constants/constants";
 import { population } from "../constants/popDict";
 
 /**
  * Summarize and group the API data by county
  * @param {Object[]} data - DoH API data in an array
+ * @param {String} region - name of the region
  */
-const getGroupedCountyData = (data) => {
-  const propsToIncrement = ["newCases", "totalTests", "percentPositive"];
+const getGroupedCountyData = (data, region) => {
   if (data.length === 0) {
+    // if nothing is here yet, return empty object
     return {};
   }
+
+  const regionTotalPopulation = getRegionPopulation(region);
+  const countyList = regionDict[region];
+  const counties = {};
+  for (const county of countyList) {
+    // initialize the summary object for each county
+    counties[county] = generateSummaryObject();
+  }
+
+  // initialize the summary object for the region
+  counties.Region = generateSummaryObject();
+
+  // set the initial date to the first date found
   let date = data[0].test_date;
-  const counties = {
-    Region: {
-      newCases: [0],
-      totalTests: [0],
-      percentPositive: [0],
-      rolling7Avg: [0],
-      rollingCaseAvg: [0],
-    },
-  };
-  let index = 0;
+  let index = 0; // tracks when we have moved to a new day of data
+  // set up the regional sums at 0
+  let regionCases = 0;
+  let regionTests = 0;
+
   for (const point of data) {
     // walk through list and propogate county based data
     const county = point.county;
+
+   
+
     if (date !== point.test_date) {
-      // when date changes, increment index and initialize Region counters
-      const RegionPercentTemp =
-        counties.Region.percentPositive[index] /
-        (Object.keys(counties).length - 1);
-      counties.Region.percentPositive[index] = round(RegionPercentTemp, 4);
-      index++;
+      // when date changes, increment index and tally regional data
       date = point.test_date;
-      if (index > 7) {
-        // rolling positive percentage 
-        const temp7 =
-          counties.Region.rolling7Avg[index - 8] /
-          (Object.keys(counties).length - 1);
-        counties.Region.rolling7Avg[index - 8] = round(temp7, 4);
-        counties.Region.rolling7Avg.push(0);
+      // set regional totals for this date
+      counties.Region.newCases.push(regionCases);
+      counties.Region.totalTests.push(regionTests);
+
+      // calculate regional percent positive rate for this date
+      counties.Region.percentPositive.push(round(
+        regionCases / regionTests,
+        4
+      ));
+
+      index++;
+      if (index > 6) {
+        // we now have 7 days of region data, we can start creating 7 day averages
+
+        const region7DayCases = counties.Region.newCases.slice(
+          index - 7,
+          index
+        );
+        console.log(index)
+        const region7DayTests = counties.Region.totalTests.slice(
+          index - 7,
+          index
+        );
+
+        // rolling positive percentage
+        counties.Region.rolling7Avg.push(
+          round(unWeightedAvg(region7DayCases, region7DayTests), 4)
+        );
 
         // rolling case avg.
-        const caseAvg = counties.Region.rollingCaseAvg[index - 8] / (Object.keys(counties).length - 1);
-        counties.Region.rollingCaseAvg[index - 8] = round(caseAvg, 1)
-        counties.Region.rollingCaseAvg.push(0);
+        counties.Region.rollingCaseAvg.push(
+          calcCasePer100k(avg(region7DayCases), regionTotalPopulation)
+        );
       }
 
+      regionCases = 0;
+      regionTests = 0;
+    }
 
-      for (const prop of propsToIncrement) {
-        counties.Region[prop].push(0);
-      }
+    // When we have 7 days of data, generate the 7 day averages
+    if (index > 6) {
+      // percent avg
+      const county7DayCases = counties[county].newCases.slice(index - 7, index);
+      const county7Avg = round(
+        unWeightedAvg(
+          county7DayCases,
+          counties[county].totalTests.slice(index - 7, index)
+        ),
+        4
+      );
+      counties[county].rolling7Avg[index - 7] = county7Avg;
+
+      // case avg
+      const countyCaseAvg = calcCasePer100k(
+        avg(county7DayCases),
+        population[county]
+      );
+      counties[county].rollingCaseAvg[index - 7] = countyCaseAvg;
     }
-    if (!counties[county]) {
-      counties[county] = {
-        newCases: [],
-        totalTests: [],
-        percentPositive: [],
-        rolling7Avg: [],
-        rollingCaseAvg: [],
-      };
-    }
+
     counties[county].newCases.push(parseInt(point.new_positives));
     counties[county].totalTests.push(parseInt(point.total_number_of_tests));
     counties[county].percentPositive.push(
       round(point.new_positives / point.total_number_of_tests, 4)
     );
-    if (index > 6) {
-      // percent avg
-      const county7Avg = round(
-        avg(counties[county].percentPositive.slice(index - 7, index)),
-        4
+
+    // update sums for whole region
+    regionCases += parseInt(point.new_positives);
+    regionTests += parseInt(point.total_number_of_tests);
+  }
+
+  // last day of averages never gets added since the loop ends
+  index++;
+
+  for (const county of countyList) {
+    // percent avg
+    const county7DayCases = counties[county].newCases.slice(index - 7, index);
+    const county7Avg = round(
+      unWeightedAvg(
+        county7DayCases,
+        counties[county].totalTests.slice(index - 7, index)
+      ),
+      4
+    );
+    counties[county].rolling7Avg[index - 7] = county7Avg;
+
+    // case avg
+    const countyCaseAvg = calcCasePer100k(
+      avg(county7DayCases),
+      population[county]
+    );
+    counties[county].rollingCaseAvg[index - 7] = countyCaseAvg;
+  }
+
+  counties.Region.newCases.push(regionCases);
+  counties.Region.totalTests.push(regionTests);
+  counties.Region.percentPositive.push(round(
+    regionCases / regionTests,
+    4
+  ));
+  const region7DayCases = counties.Region.newCases.slice(index - 7, index);
+  const region7DayTests = counties.Region.totalTests.slice(index - 7, index);
+  
+  // rolling positive percentage
+  counties.Region.rolling7Avg.push(
+    round(unWeightedAvg(region7DayCases, region7DayTests), 4)
+    );
+    
+    // rolling case avg.
+    counties.Region.rollingCaseAvg.push(
+      calcCasePer100k(avg(region7DayCases), regionTotalPopulation)
       );
-      counties[county].rolling7Avg[index - 7] = county7Avg;
-      counties.Region.rolling7Avg[index - 7] += county7Avg;
-
-      // case avg
-
-      let countyCaseAvg = calcCasePer100k(
-        avg(counties[county].newCases.slice(index - 7, index)), population[county]);
-      counties[county].rollingCaseAvg[index - 7] = countyCaseAvg;
-      counties.Region.rollingCaseAvg[index - 7] += countyCaseAvg;
-    }
-
-    // update summary for whole region
-    counties.Region.newCases[index] += parseInt(point.new_positives);
-    counties.Region.totalTests[index] += parseInt(point.total_number_of_tests);
-    counties.Region.percentPositive[index] +=
-      counties[county].percentPositive[index];
-  }
-  const RegionPercentTemp =
-    counties.Region.percentPositive[index] / (Object.keys(counties).length - 1);
-  counties.Region.percentPositive[index] = round(RegionPercentTemp, 4);
-  
-  if (index > 6) {
-    // percentage avg
-    const temp7 =
-      counties.Region.rolling7Avg[index - 7] /
-      (Object.keys(counties).length - 1);
-    counties.Region.rolling7Avg[index - 7] = round(temp7, 4);
-
-    // case avg.
-    const tempCases =
-    counties.Region.rollingCaseAvg[index - 7] /
-    (Object.keys(counties).length - 1);
-  counties.Region.rollingCaseAvg[index - 7] = round(tempCases, 1);
-    
-  }
-
-  // last day never gets added since the loop ends
-  for(const county of Object.keys(counties)){
-    const dataLength = counties[county].percentPositive.length;
-    const last7Day = avg(counties[county].percentPositive.slice(dataLength - 7));
-    counties[county].rolling7Avg.push(round(last7Day, 4));
-  
-    const casesLength = counties[county].newCases.length;
-    const cases7Day = avg(counties[county].newCases.slice(casesLength - 7));
-    counties[county].rollingCaseAvg.push(round(calcCasePer100k(cases7Day, population[county]), 1));
-    
-  }
-
-
+  console.log(counties);
   return counties;
 };
+
+
+
 /**
  * calculate the average of a list of numbers
  * @param {int[]} list - list of numbers
@@ -135,12 +170,55 @@ function avg(list) {
 }
 
 /**
+ * simple sum callback for reducing lists
+ * @param {*int} acc - accumulator
+ * @param {*int} curr - current value
+ */
+function sum(acc, curr) {
+  return acc + curr;
+}
+
+/**
+ * calculate the unweighted average using a list of numerators and a list of denomenators
+ * @param {int[]} numList - list of numbers for numerator
+ * @param {*int[]} denomList - list of numbers for denomonator
+ */
+function unWeightedAvg(numList, denomList) {
+  const numerator = numList.reduce(sum);
+  const denomonator = denomList.reduce(sum);
+  return numerator / denomonator;
+}
+
+/**
  * rounds a number to n decimals
  * @param {Number} num - number to round
  * @param {Number} decimals - number of decimals to round to
  */
 function round(num, decimals) {
   return parseFloat(num.toFixed(decimals));
+}
+
+/**
+ * Calculates the total regional population
+ * @param {String} region - name of the region
+ */
+
+function getRegionPopulation(region) {
+  const counties = regionDict[region];
+  return counties.map((county) => population[county]).reduce(sum);
+}
+
+/**
+ * Generates the object with properties for the summary data
+ */
+function generateSummaryObject() {
+  return {
+    newCases: [],
+    totalTests: [],
+    percentPositive: [],
+    rolling7Avg: [],
+    rollingCaseAvg: [],
+  };
 }
 
 /**
@@ -158,31 +236,33 @@ const sortByDate = (a, b) => {
   }
 };
 /**
- * 
+ *
  * @param {Object} countyData - county data
  * @param {int} sliceAmount - amount of data to slice off the end
  */
 const sliceData = (countyData, sliceAmount) => {
   const result = {};
-    if(typeof countyData === 'undefined' || JSON.stringify(countyData) === "{}"){
-      return result
-    }
-    for(const prop of listProps){
-      const length = countyData[prop].length;
-      result[prop] = countyData[prop].slice(length - sliceAmount);
-    }
-  return result
-}
+  if (
+    typeof countyData === "undefined" ||
+    JSON.stringify(countyData) === "{}"
+  ) {
+    return result;
+  }
+  for (const prop of listProps) {
+    const length = countyData[prop].length;
+    result[prop] = countyData[prop].slice(length - sliceAmount);
+  }
+  return result;
+};
 
 /**
- * 
+ *
  * @param {float} caseAvg - case avg
  * @param {string} countyPop- county population
  */
 const calcCasePer100k = (caseAvg, countyPop) => {
   const avg = round((caseAvg / countyPop) * 100000, 1);
   return avg;
-}
+};
 
-
-export { getGroupedCountyData, sortByDate, sliceData }
+export { getGroupedCountyData, sortByDate, sliceData };

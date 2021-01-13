@@ -2,66 +2,75 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 Vue.use(Vuex);
-import { getAllData } from "../api/data";
-import { getGroupedCountyData, sortByDate, sliceData } from "../helpers/dataProcessing";
-import { counties, colors } from "../constants/constants";
+import { getData } from "../api/data";
+import {
+  getGroupedCountyData,
+  sortByDate,
+  sliceData,
+} from "../helpers/dataProcessing";
+import { colors, regionDict } from "../constants/constants";
 
 export default new Vuex.Store({
   state: {
     data: [],
-    counties: ["Region", ...counties],
+    regions: regionDict,
+    // counties: ["Region", ...counties],
     loading: false,
     colors: colors,
     selectedCounty: "Region",
+    selectedRegion: "",
+    regionData: {},
     countyData: {},
     updatedTimestamp: "",
     timeRangeMode: 0, // 0 is 14 days, 1 is all time
+    selectedIndex: 0,
+    currentRegionData: {},
+    selectedCountyData: {}
   },
   getters: {
-    currentCountyData: (state) => {
-      const countyData = state.countyData;
-      const counties = state.counties;
-      if (state.timeRangeMode === 1) {
-        return countyData;
-      } else {
-        const recentCounty = {};
-        if (JSON.stringify(countyData) === "{}") {
-          return {};
-        }
-        for (const countyName of counties) {
-          const county = countyData[countyName];
-          const result = { ...sliceData(county, 14)};
-          recentCounty[countyName] = { ...result };
-        }
-        return recentCounty;
-      }
-    },
     dates: (state) => {
       const allDates = [...new Set(state.data.map((d) => d.test_date))].sort();
-      if (state.timeRangeMode === 0) {
-        return allDates.slice(allDates.length - 14);
-      } else {
         return allDates;
-      }
-    },
-    loading: (state) => state.loading,
-    selectedCountyData: (state, getters) => {
-      return getters.currentCountyData[state.selectedCounty];
+      
     },
     selectedColor: (state) => {
-      return colors[state.selectedCounty];
+      return state.selectedCounty === 'Region' ? '#000' : state.colors[state.selectedIndex];
     },
   },
   mutations: {
-    SET_DATA(state, data) {
-      state.data = data.sort(sortByDate);
-      state.countyData = getGroupedCountyData(state.data);
+    SET_DATA(state, payload) {
+      state.data = payload.data.sort(sortByDate);
+      state.regionData[payload.region] = getGroupedCountyData(
+        state.data,
+        payload.region
+      );
     },
     SET_LOADING(state, isLoading) {
       state.loading = isLoading;
     },
     SET_COUNTY(state, county) {
       state.selectedCounty = county;
+      state.selectedCountyData = state.currentRegionData[county]
+      state.selectedIndex = regionDict[state.selectedRegion].indexOf(state.selectedCounty);
+    },
+    SET_REGION(state, region) {
+      state.selectedRegion = region;
+      const regionData = state.regionData;
+      const counties = ["Region", ...state.regions[region]];
+      if (state.timeRangeMode === 1) {
+        state.currentRegionData = regionData[region];
+      } else {
+        const recentRegion = {};
+        if (JSON.stringify(regionData[region]) === "{}") {
+          state.currentRegionData = {};
+        }
+        for (const countyName of counties) {
+          const county = regionData[region][countyName];
+          const result = { ...sliceData(county, 14) };
+          recentRegion[countyName] = { ...result };
+        }
+        state.currentRegionData  = recentRegion;
+      }
     },
     SET_TIMESTAMP(state, data) {
       state.updatedTimestamp = data;
@@ -71,21 +80,20 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async getData({ commit }) {
+    async getData({ commit, state }, region) {
       try {
-        commit("SET_LOADING", true);
-        let response = await getAllData();
+        const counties = state.regions[region];
+        let response = await getData(false, counties, state.timeRangeMode);
         let lastModified = response.headers["last-modified"];
         const date = new Date(lastModified);
         const now = new Date();
         const diff = now.getTime() - date.getTime();
         if (diff > 16 * 3600 * 1000) {
-          response = await getAllData(true);
+          response = await getData(true, counties, state.timeRangeMode);
           lastModified = response.headers["last-modified"];
         }
-        commit("SET_DATA", response.data);
+        commit("SET_DATA", { data: response.data, region });
         commit("SET_TIMESTAMP", lastModified);
-        commit("SET_LOADING", false);
       } catch (err) {
         console.log(err);
       }
