@@ -5,9 +5,9 @@
 </template>
 
 <script>
-import StackedBar from './StackedBar';
+import StackedBar from "./StackedBar";
 export default {
- name: 'StackedBarParent',
+  name: "StackedBarParent",
   components: {
     StackedBar,
   },
@@ -20,9 +20,15 @@ export default {
       type: String,
       default: null,
     },
+    countyIndex: {
+      type: Number,
+      default: 0,
+    },
     colors: {
-      type: Object,
-      default: null,
+      type: Array,
+      default: function () {
+        return [];
+      },
     },
     labels: {
       type: Array,
@@ -32,19 +38,33 @@ export default {
     },
   },
   data() {
-       return {
+    return {
       options: {
         responsive: true,
-         tooltips: {
+        tooltips: {
           displayColors: false,
           callbacks: {
-            title: function(tooltipItems){
-              let title = '';
-              if(tooltipItems.length > 0){
+            title: function (tooltipItems) {
+              let title = "";
+              if (tooltipItems.length > 0) {
                 title = new Date(tooltipItems[0].label).toLocaleDateString();
               }
               return title;
-            }
+            },
+          },
+        },
+        legend: {
+          labels: {
+            generateLabels: function (chart) {
+              return chart.data.datasets.map((dataset) => {
+                return {
+                  text: dataset.label,
+                  fillStyle: dataset.backgroundColor,
+                  strokeStyle: 'black',
+                  lineWidth: 1
+                };
+              });
+            },
           },
         },
         scales: {
@@ -56,52 +76,55 @@ export default {
           xAxes: [
             {
               type: "time",
-              unit: 'day',
+              unit: "day",
               time: {
-                minUnit: 'day'
+                minUnit: "day",
               },
               stacked: true,
               ticks: {
-                  source: 'auto'
-              }
+                source: "auto",
+              },
             },
           ],
         },
       },
+      chartData: {},
+      dataReady: false,
     };
   },
-  computed: {
-      datasets(){
-          if(this.county === 'Region'){
-              return  Object.keys(this.regions)
-                .filter((n) => n !== "Region")
-                .map((county) => ({
-                    label: county,
-                    data: this.regions[county].newCases,
-                    backgroundColor: this.colors[county],
-                })
-                )
-                .reverse();
-          } else {
-              return [
-                  {
-                    label: this.county,
-                    data: this.regions[this.county].newCases,
-                    backgroundColor: this.colors[this.county],
-                  }
-              ]
-          }
-      },
-      chartData(){
-          return {
-              labels: this.labels,
-              datasets: this.datasets
-          }
-
-      },
-      dataReady() {
-          return this.county && this.regions && this.labels.length > 0 && this.colors
+  methods: {
+    generateDataset() {
+      if (this.county === "Region") {
+        return Object.keys(this.regions)
+          .filter((n) => n !== "Region")
+          .map((county, i) => ({
+            label: county,
+            data: this.regions[county].newCases,
+            backgroundColor: this.colors[i],
+          }))
+          .reverse();
+      } else {
+        return [
+          {
+            label: this.county,
+            data: this.regions[this.county].newCases,
+            backgroundColor: this.colors[this.countyIndex],
+          },
+        ];
       }
-  }
+    },
+  },
+  watch: {
+    county: {
+      immediate: true,
+      handler() {
+        this.chartData = {
+          labels: this.labels,
+          datasets: this.generateDataset(),
+        };
+        this.dataReady = true;
+      },
+    },
+  },
 };
 </script>
