@@ -1,5 +1,4 @@
 import httpClient from "./httpClient";
-import { counties } from "../constants/constants";
 
 /**
  * Shuffle an array
@@ -20,7 +19,12 @@ function shuffle(array) {
   return array;
 }
 
-function getWhereString(shouldShuffle) {
+/**
+ * 
+ * @param {boolean} shouldShuffle - should the order be shuffled to bust cache
+ * @param {string[]} counties - counties to fetch
+ */
+function getWhereString(shouldShuffle, counties, startDate) {
   let str = "(";
   const tempCounties = shouldShuffle
     ? shuffle(counties.slice())
@@ -30,13 +34,23 @@ function getWhereString(shouldShuffle) {
     str += `county = "${county}" OR `;
   }
   str += `county = "${last}"`;
-  str += `) AND (test_date >= "2020-03-01")`;
+  // TODO: consider changing the date here if adding a range date picker
+  str += `) AND (test_date >= "${startDate}")`;
   return str;
 }
 
-const getAllData = (shouldShuffle) => {
+function get2WeeksAgo(){
+  const today = new Date();
+  const temp = new Date(today);
+  // actually need 3 weeks for 7 day averages
+  temp.setTime(temp - 21 * 24 * 3600 * 1000);
+  return new Date(temp).toISOString().substr(0,10);
+}
+
+const getData = (shouldShuffle, counties, dateMode) => {
+  const startDate = dateMode === 0 ? get2WeeksAgo() : '2020-03-01';
   const params = {
-    $where: getWhereString(shouldShuffle),
+    $where: getWhereString(shouldShuffle, counties, startDate),
     $select: "test_date,county,new_positives,total_number_of_tests",
     $limit: 50000,
   };
@@ -46,4 +60,4 @@ const getAllData = (shouldShuffle) => {
 
 
 
-export { getAllData};
+export { getData};
