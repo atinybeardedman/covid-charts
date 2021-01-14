@@ -34,7 +34,6 @@ export default {
         },
         regionIndex(){
             const index = this.regions.findIndex(r => r.name === this.regionName);
-            console.log(index);
             return index;
         }
     },

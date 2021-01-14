@@ -57,7 +57,6 @@ const getGroupedCountyData = (data, region) => {
           index - 7,
           index
         );
-        console.log(index)
         const region7DayTests = counties.Region.totalTests.slice(
           index - 7,
           index
@@ -151,7 +150,6 @@ const getGroupedCountyData = (data, region) => {
     counties.Region.rollingCaseAvg.push(
       calcCasePer100k(avg(region7DayCases), regionTotalPopulation)
       );
-  console.log(counties);
   return counties;
 };
 
