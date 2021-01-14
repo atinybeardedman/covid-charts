@@ -31,8 +31,8 @@
         @closeDrawer="$event === false ? (drawer = false) : null"
       ></side-nav>
       <template v-slot:append>
-        <div class="caption text-center">
-          Updated at: {{ new Date(updatedTimestamp).toLocaleString() }}
+        <div class="caption text-center" v-if="updatedTimestamp">
+          Data from: {{ new Date(updatedTimestamp).toLocaleString() }}
         </div>
       </template>
     </v-navigation-drawer>
