@@ -10,6 +10,7 @@ export const colors = [
    "#9966ff",
    "#b199e7",
    "#c9cbcf",
+   "#737882"
 ];
 
 export const listProps = [
@@ -89,3 +90,4 @@ export const regionDict = {
   "New-York-City": ["Bronx", "Kings", "New York", "Richmond", "Queens"],
   "Long-Island": ["Nassau", "Suffolk"],
 };
+
