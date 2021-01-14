@@ -5,19 +5,24 @@
     xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
     viewBox="0 0 633.475098 475.573242"
   >
-    <g>
-      <g v-for="region in regionList" :key="region.name" class="region">
+    <g @mouseleave="$emit('region-hover', '')">
+      <g
+        v-for="region in regionList"
+        :key="region.name"
+        class="region"
+        @mouseover="$emit('region-hover', region.name)"
+      >
         <router-link
-          :to="getLink(region.name, county.name)"
+          :to="getLink(region.name, 'Region')"
           v-for="county in region.counties"
           :key="county.name"
-          :fill="region.color"
         >
           <polygon
             v-if="county.tag === 'polygon'"
             :points="county.data"
+            :fill="region.color"
           ></polygon>
-          <path v-else :d="county.data"></path>
+          <path v-else :d="county.data" :fill="region.color"></path>
         </router-link>
       </g>
     </g>
@@ -57,10 +62,13 @@ path,
 polygon {
   stroke: black;
   stroke-width: 0.25;
+}
+
+.region {
   transition: opacity 0.2s;
 }
 
-.region:hover {
+.region:hover, .region.hovered {
   opacity: 0.75;
 }
 </style>

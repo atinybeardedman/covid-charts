@@ -8,10 +8,10 @@
     </v-row>
     <v-row align="center" justify="space-around">
       <v-col :cols="12" :md="6">
-        <NewYorkMap />
+        <NewYorkMap v-on:region-hover="updateRegion($event)"/>
       </v-col>
       <v-col :md="3">
-        <MapLegend />
+        <MapLegend :regionName="hoveredRegion" />
       </v-col>
 
     </v-row>
@@ -23,6 +23,16 @@ import NewYorkMap from "../components/NewYorkMap";
 import MapLegend from "../components/MapLegend";
 export default {
   name: "home",
+  data(){
+    return {
+      hoveredRegion: ''
+    }
+  },
+  methods: {
+    updateRegion(region){
+      this.hoveredRegion = region; 
+    }
+  },
   components: {
     NewYorkMap,
     MapLegend
