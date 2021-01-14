@@ -62,7 +62,7 @@ export default {
           {
             lastValue: `${this.rollingCaseAvg[0]}`,
             value: `${this.rollingCaseAvg[1]}`,
-            description: "7 Day Cases Per 100k",
+            description: "7 Day Avg. Cases Per 100k",
             isIncr: this.isIncr(this.rollingCaseAvg),
             color: this.color,
             loading: false,
@@ -70,7 +70,7 @@ export default {
           {
             lastValue: this.renderPercent(this.percentPositive[0]),
             value: this.renderPercent(this.percentPositive[1]),
-            description: "% Positive",
+            description: "Latest Positivity Rate",
             isIncr: this.isIncr(this.percentPositive),
             color: this.color,
             loading: false,
@@ -78,7 +78,7 @@ export default {
           {
             lastValue: this.renderPercent(this.rolling7Avg[0]),
             value: this.renderPercent(this.rolling7Avg[1]),
-            description: "7 Day Avg.",
+            description: "7 Day Avg. Positivity Rate",
             isIncr: this.isIncr(this.rolling7Avg),
             color: this.color,
             loading: false,

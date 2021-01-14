@@ -8,6 +8,7 @@
         <v-col :cols="12" :md="6" :lg="5">
           <v-card>
             <v-card-title>New Cases</v-card-title>
+            <v-card-subtitle>Daily Reported Positives</v-card-subtitle>
             <v-card-text>
               <StackedBarParent
                 :regions="currentRegionData"
@@ -22,6 +23,7 @@
         <v-col :cols="12" :md="6" :lg="5">
           <v-card>
             <v-card-title>Cases per 100k</v-card-title>
+            <v-card-subtitle>7 Day Rolling Average</v-card-subtitle>
             <v-card-text>
               <LineGraphParent
                 :region="selectedCountyData"
@@ -36,6 +38,7 @@
         <v-col :cols="12" :md="6" :lg="5">
           <v-card>
             <v-card-title>Percent Positive</v-card-title>
+            <v-card-subtitle>Postive Tests per Total Tests Administered</v-card-subtitle>
             <v-card-text>
               <LineGraphParent
                 :region="selectedCountyData"
@@ -48,7 +51,8 @@
         </v-col>
         <v-col :cols="12" :md="6" :lg="5">
           <v-card>
-            <v-card-title>7 Day Rolling Avg.</v-card-title>
+            <v-card-title>Average Percent Positive</v-card-title>
+            <v-card-subtitle>7 Day Rolling Average</v-card-subtitle>
             <v-card-text>
               <LineGraphParent
                 :region="selectedCountyData"
