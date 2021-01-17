@@ -4,7 +4,7 @@
       <v-card-text>
           <v-list>
               <v-list-item-group :value="regionIndex">
-                <v-list-item v-for="region in regions" :key="region.name" @click="navigate(region.name)">
+                <v-list-item v-for="region in regions" :key="region.name" :to="`${region.name}/Region`">
                     <v-list-item-icon>
                         <v-icon :color="region.color">
                             mdi-checkbox-blank-circle
@@ -35,11 +35,6 @@ export default {
         regionIndex(){
             const index = this.regions.findIndex(r => r.name === this.regionName);
             return index;
-        }
-    },
-    methods: {
-        navigate(regionName){
-            this.$router.push(`/${regionName}/Region`)
         }
     }
 
