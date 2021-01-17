@@ -5,7 +5,10 @@
     xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
     viewBox="0 0 633.475098 475.573242"
   >
-    <g @mouseleave="$emit('region-hover', '')">
+    <g>
+      <path fill="none" id="New_York_State" :d="outlinePath"></path>
+    </g>
+    <g>
         <router-link
           :to="getLink(region.region, 'Region')"
           v-for="region in regionList"
@@ -19,7 +22,7 @@
 </template>
 
 <script>
-import { regionsSVG } from "../constants/countiesSVG";
+import { regionsSVG, stateOutline } from "../constants/countiesSVG";
 import { regionDict, colors } from "../constants/constants";
 export default {
   name: "NewYorkMap",
@@ -36,16 +39,18 @@ export default {
     regionList() {
       return regionsSVG.map(r => ({...r, color: this.getColor(r.region)}))
     },
+    outlinePath(){
+      return stateOutline
+    }
   },
 };
 </script>
 
 <style>
-g,
-path,
-polygon {
+
+path{
   stroke: black;
-  stroke-width: 0.25;
+  stroke-width: 0.5;
 }
 
 .region {
