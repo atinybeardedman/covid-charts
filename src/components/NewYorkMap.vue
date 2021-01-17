@@ -4,6 +4,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
     viewBox="0 0 633.475098 475.573242"
+    @mouseleave="$emit('region-hover','')"
   >
     <g>
       <path fill="none" id="New_York_State" :d="outlinePath"></path>
