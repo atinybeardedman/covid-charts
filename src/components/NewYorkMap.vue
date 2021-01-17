@@ -6,31 +6,20 @@
     viewBox="0 0 633.475098 475.573242"
   >
     <g @mouseleave="$emit('region-hover', '')">
-      <g
-        v-for="region in regionList"
-        :key="region.name"
-        class="region"
-        @mouseover="$emit('region-hover', region.name)"
-      >
         <router-link
-          :to="getLink(region.name, 'Region')"
-          v-for="county in region.counties"
-          :key="county.name"
+          :to="getLink(region.region, 'Region')"
+          v-for="region in regionList"
+          :key="region.region"
+          class="region"
         >
-          <polygon
-            v-if="county.tag === 'polygon'"
-            :points="county.data"
-            :fill="region.color"
-          ></polygon>
-          <path v-else :d="county.data" :fill="region.color"></path>
+        <path :fill="region.color" :d="region.data" @mouseover="$emit('region-hover', region.region)"></path>
         </router-link>
-      </g>
     </g>
   </svg>
 </template>
 
 <script>
-import { countyPoints } from "../constants/countiesSVG";
+import { regionsSVG } from "../constants/countiesSVG";
 import { regionDict, colors } from "../constants/constants";
 export default {
   name: "NewYorkMap",
@@ -38,19 +27,14 @@ export default {
     getLink(region, county) {
       return `/${region}/${county}`;
     },
+    getColor(regionName){
+      const index = Object.keys(regionDict).indexOf(regionName);
+      return colors[index];
+    }
   },
   computed: {
     regionList() {
-      return Object.keys(regionDict).map((r, regionIndex) => ({
-        name: r,
-        color: colors[regionIndex],
-        counties: regionDict[r].map((c, countyIndex) => ({
-          name: c,
-          data: countyPoints[c].data,
-          tag: countyPoints[c].tag,
-          color: colors[countyIndex],
-        })),
-      }));
+      return regionsSVG.map(r => ({...r, color: this.getColor(r.region)}))
     },
   },
 };
