@@ -28,7 +28,6 @@ export default {
   props: ["regionName"],
   methods: {
     isActive(name) {
-      console.log(name);
       return name === this.regionName
     },
   },
