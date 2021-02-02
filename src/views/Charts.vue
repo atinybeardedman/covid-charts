@@ -124,11 +124,14 @@ export default {
       this.updateRegion(newRegion).then(() => {
         this.$store.commit("SET_COUNTY", newCounty);
         this.$store.commit("SET_LOADING", false);
+        next();
       });
     } else if (newCounty !== from.params.county) {
       this.$store.commit("SET_COUNTY", newCounty);
+      next();
+    } else {
+      next();
     }
-    next();
   },
   created() {
     this.updateRegion(this.region).then(() => {

@@ -10,9 +10,10 @@
     <v-list nav dense>
       <v-list-group
         sub-group
-        v-for="(counties, regionName) in regions"
+        v-for="(counties, regionName, index) in regions"
         :key="regionName"
         :value="regionName == selectedRegion"
+        :color="colors[index]"
       >
         <template v-slot:activator>
           <v-list-item-content>
