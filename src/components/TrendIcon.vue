@@ -39,7 +39,7 @@ export default {
           };
         default:
           return {
-            name: "mdi-trending-flat",
+            name: "mdi-trending-neutral",
             color: "black",
           };
       }
