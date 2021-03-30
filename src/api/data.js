@@ -20,11 +20,11 @@ function shuffle(array) {
 }
 
 /**
- * 
+ * function to build the where query string for the counties given
  * @param {boolean} shouldShuffle - should the order be shuffled to bust cache
  * @param {string[]} counties - counties to fetch
  */
-function getWhereString(shouldShuffle, counties, startDate) {
+function getWhereString(shouldShuffle, counties) {
   let str = "(";
   const tempCounties = shouldShuffle
     ? shuffle(counties.slice())
@@ -33,26 +33,22 @@ function getWhereString(shouldShuffle, counties, startDate) {
   for (const county of tempCounties) {
     str += `county = "${county}" OR `;
   }
-  str += `county = "${last}"`;
-  // TODO: consider changing the date here if adding a range date picker
-  str += `) AND (test_date >= "${startDate}")`;
+  str += `county = "${last}")`;
+
   return str;
 }
 
-function get2WeeksAgo(){
-  const today = new Date();
-  const temp = new Date(today);
-  // actually need 3 weeks for 7 day averages
-  temp.setTime(temp - 21 * 24 * 3600 * 1000);
-  return new Date(temp).toISOString().substr(0,10);
-}
-
-const getData = (shouldShuffle, counties, dateMode) => {
-  const startDate = dateMode === 0 ? get2WeeksAgo() : '2020-03-01';
+/**
+ * function to fetch the data from the api from the counties given
+ * @param {boolean} shouldShuffle - should the order be shuffled to bust cache
+ * @param {string[]} counties - counties to fetch
+ */
+const getData = (shouldShuffle, counties) => {
   const params = {
-    $where: getWhereString(shouldShuffle, counties, startDate),
+    $where: getWhereString(shouldShuffle, counties),
     $select: "test_date,county,new_positives,total_number_of_tests",
-    $limit: 50000,
+    $order: "test_date DESC",
+    $limit: counties.length * 21,
   };
   const options = { params };
   return httpClient.get(process.env.VUE_APP_BASE_URL, options);
